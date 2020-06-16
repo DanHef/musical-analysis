@@ -15,6 +15,11 @@ const { AnalysisEntity, PartEntity, TagEntity } = require('./model/model');
 
 const app = express();
 
+//Body Parsing
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
 //Routes
 app.use('/analysis', analysis);
 app.use('/parts', parts);
