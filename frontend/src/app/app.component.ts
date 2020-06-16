@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import WaveSurfer from 'wavesurfer.js';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,7 @@ export class AppComponent implements OnInit {
   }
 
   public createAnalysisSession() {
-    this.httpClient.post('http://localhost:4500/analysis', {
+    this.httpClient.post(environment.apiEndpoint + '/analysis', {
       id: this.analysisSessionID
     }).subscribe(() => {
       console.log('hello');
@@ -31,7 +32,7 @@ export class AppComponent implements OnInit {
   }
 
   public async startMusic() {
-    await this.httpClient.put('http://localhost:4500/analysis/' + this.analysisSessionID, {
+    await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.analysisSessionID, {
       started: new Date().toISOString()
     }).subscribe(() => {
       console.log('hello');
@@ -41,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   public async stopMusic() {
-    await this.httpClient.put('http://localhost:4500/analysis/' + this.analysisSessionID, {
+    await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.analysisSessionID, {
       stopped: new Date().toISOString()
     }).subscribe(() => {
       console.log('hello');

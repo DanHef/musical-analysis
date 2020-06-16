@@ -38,9 +38,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //Routes
-app.use('/analysis', analysis);
-app.use('/parts', parts);
-app.use('/tags', tags);
+app.use('/api/v1/analysis', analysis);
+app.use('/api/v1/parts', parts);
+app.use('/api/v1/tags', tags);
 
 //start server
 app.use(express.static(path.join(__dirname, 'public')));
