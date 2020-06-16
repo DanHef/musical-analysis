@@ -3,7 +3,7 @@ const router = express.Router();
 const { AnalysisEntity } = require('../model/model');
 
 //create new analysis with name
-router.post('/', function(req,res) {
+router.post('/', function (req, res) {
     const body = req.body;
 
     const newAnalysis = new AnalysisEntity({
@@ -19,6 +19,21 @@ router.post('/', function(req,res) {
         .catch(() => {
             res.send('Analysis Creation Error');
         });
+});
+
+//update analysis
+router.put('/:id', async function (req, res) {
+    const body = req.body;
+
+    await AnalysisEntity.update(
+        {
+            started: body.started,
+            stopped: body.stopped
+        },
+        { where: { id: req.params.id } }
+    )
+
+    res.sendStatus(204);
 });
 
 //get all analysis
