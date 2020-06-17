@@ -45,6 +45,6 @@ app.use('/api/v1/tags', tags);
 //start server
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(4500, function () {
+app.listen(4500, 'localhost', function () {
   console.log('Example app listening on port 4500!');
 });
