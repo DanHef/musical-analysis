@@ -1,1 +1,8 @@
-<p>analysis-client works!</p>
+<mat-label>Analysis Session ID</mat-label>
+<mat-select>
+    <mat-option *ngFor="let analysisItem of analysis" [value]="analysisItem.id">
+        {{analysisItem.id}}
+    </mat-option>
+</mat-select>
+
+<!--<input matInput placeholder="Session ID" [value]="analysisSessionID" (input)="analysisSessionID = $event.target.value">-->

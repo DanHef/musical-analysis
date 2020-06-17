@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSelectModule } from '@angular/material/select';
 import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -29,7 +30,8 @@ import { NavigationComponent } from './navigation/navigation.component';
     HttpClientModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]
