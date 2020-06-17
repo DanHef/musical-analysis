@@ -1,16 +1,16 @@
 <mat-form-field style="margin: 20px 0 0 20px;">
-    <input matInput placeholder="Username" [value]="username" (input)="username = $event.target.value">
+  <input matInput placeholder="Username" [value]="username" (input)="username = $event.target.value">
 </mat-form-field>
 
 <br>
 
 <mat-form-field style="margin: 0px 0 0 20px;">
-    <mat-label>Analysis Session ID</mat-label>
-    <mat-select [(value)]="seletedAnalysisSessionID" (selectionChange)="onSessionSelected()">
-        <mat-option *ngFor="let analysisItem of analysis" [value]="analysisItem.id">
-            {{analysisItem.id}}
-        </mat-option>
-    </mat-select>
+  <mat-label>Analysis Session ID</mat-label>
+  <mat-select [(value)]="seletedAnalysisSessionID" (selectionChange)="onSessionSelected()">
+    <mat-option *ngFor="let analysisItem of analysis" [value]="analysisItem.id">
+      {{analysisItem.id}}
+    </mat-option>
+  </mat-select>
 </mat-form-field>
 
 <br>
@@ -20,24 +20,25 @@
 <h2>Abschnitte</h2>
 
 <mat-table [dataSource]="userParts" class="mat-elevation-z8">
-    <!-- Started Column -->
-    <ng-container matColumnDef="started">
-      <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.relStarted | date:'mm:ss'}} </mat-cell>
-    </ng-container>
+  <!-- Started Column -->
+  <ng-container matColumnDef="started">
+    <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.relStarted | date:'mm:ss'}} </mat-cell>
+  </ng-container>
 
-    <!-- Stopped Column -->
-    <ng-container matColumnDef="stopped">
-        <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.stopped}} </mat-cell>
-      </ng-container>
+  <!-- Stopped Column -->
+  <ng-container matColumnDef="stopped">
+    <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.stopped}} </mat-cell>
+  </ng-container>
 
-      <!-- Description Column -->
-    <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
-      </ng-container>
+  <!-- Description Column -->
+  <ng-container matColumnDef="description">
+    <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+  </ng-container>
   
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

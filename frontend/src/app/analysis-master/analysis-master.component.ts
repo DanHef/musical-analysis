@@ -11,6 +11,8 @@ import { environment } from '../../environments/environment';
 export class AnalysisMasterComponent implements OnInit {
   analysisSessionID = '';
   wavesurfer;
+  analysis;
+  displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
 
   constructor(private readonly httpClient: HttpClient) { }
 
@@ -20,13 +22,15 @@ export class AnalysisMasterComponent implements OnInit {
     });
 
     this.wavesurfer.load('http://molle.heffter.net/audio/Strophen-Holz.mp3');
+
+    this.loadAnalysis();
   }
 
   public createAnalysisSession() {
     this.httpClient.post(environment.apiEndpoint + '/analysis', {
       id: this.analysisSessionID
     }).subscribe(() => {
-      console.log('hello');
+      this.loadAnalysis();
     });
   }
 
@@ -48,6 +52,15 @@ export class AnalysisMasterComponent implements OnInit {
     });
 
     this.wavesurfer.stop();
+  }
+
+  public async onDelete(analysis) {
+    await this.httpClient.delete(environment.apiEndpoint + '/analysis/' + analysis.id).toPromise();
+    this.loadAnalysis();
+  }
+
+  private async loadAnalysis() {
+    this.analysis = await this.httpClient.get(environment.apiEndpoint + '/analysis').toPromise();
   }
 
 }

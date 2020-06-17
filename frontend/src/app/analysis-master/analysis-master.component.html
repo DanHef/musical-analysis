@@ -1,3 +1,8 @@
+<h2>
+    Analyse Session Verwaltung
+</h2>
+
+<h5>Neue Session</h5>
 <mat-form-field style="margin: 20 0 0 20;">
     <input matInput placeholder="Session ID" [value]="analysisSessionID"
         (input)="analysisSessionID = $event.target.value">
@@ -6,7 +11,51 @@
 <br>
 <button mat-button (click)="createAnalysisSession()">Create Analysis Session</button>
 <br>
+
+<h5>Erstellte Sessions</h5>
+
+<mat-table [dataSource]="analysis" class="mat-elevation-z8">
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.id }} </mat-cell>
+    </ng-container>
+
+    <!-- Started Column -->
+    <ng-container matColumnDef="started">
+        <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.started | date:'medium' }} </mat-cell>
+    </ng-container>
+
+    <!-- Stopped Column -->
+    <ng-container matColumnDef="stopped">
+        <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.stopped | date:'medium' }} </mat-cell>
+    </ng-container>
+
+    <!-- Delete Column -->
+    <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <button mat-button (click)="onDelete(element)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-cell>
+        <!--<mat-cell *matCellDef="let element"> <i (click)="onDelete($event)" style="cursor: pointer;"
+                class="material-icons">delete</i> </mat-cell>-->
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<h2>Session - Audio Steuerung</h2>
+
 <button mat-button (click)="startMusic()">Start</button>
 <button mat-button (click)="stopMusic()">Stop</button>
 
 <div id="wavesurfer"></div>
+
+<h2>Session - Auswertung</h2>
+
+TBD
