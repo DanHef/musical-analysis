@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
 import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -31,7 +33,9 @@ import { NavigationComponent } from './navigation/navigation.component';
     MatButtonModule,
     MatFormFieldModule,
     MatToolbarModule,
-    MatSelectModule
+    MatSelectModule,
+    MatInputModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

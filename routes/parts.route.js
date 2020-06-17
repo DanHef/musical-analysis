@@ -1,31 +1,84 @@
 const express = require('express');
 const router = express.Router();
-const { PartEntity } = require('../model/model');
+const { PartEntity, AnalysisEntity } = require('../model/model');
 
 //create new part
-router.post('/', function(req,res) {
+router.post('/', function (req, res) {
     const body = req.body;
 
     const newPart = new PartEntity({
         id: body.id,
         started: body.started,
-        stopped: body.stopped
+        stopped: body.stopped,
+        username: body.username,
+        analysisId: body.analysisId,
+        tagId: body.tagId,
+        description: body.description
     });
 
     newPart.save()
         .then(() => {
-            res.send("Part Created Successfully");
+            res.send(newPart);
         })
-        .catch(() => {
-            res.send('Part Creation Error');
+        .catch((error) => {
+            res.sendStatus(409);
         });
 });
 
+// update existing part
+router.put('/:id', async function (req, res) {
+    const body = req.body;
+
+    await PartEntity.update(
+        {
+            started: body.started,
+            stopped: body.stopped,
+            username: body.username,
+            analysisId: body.analysisId,
+            tagId: body.tagId,
+            description: body.description
+        },
+        { where: { id: req.params.id } }
+    )
+
+    res.sendStatus(204);
+});
+
+
 //get all parts
 router.get('/', async function (req, res) {
+    const username = req.query.username;
+    const analysisId = req.query.analysisId;
+    const partsResponse = [];
+
     try {
-        const allParts = await PartEntity.findAll();
-        res.send(allParts);
+        let allParts = await PartEntity.findAll({
+            where: {
+                username,
+                analysisId
+            }
+        });
+
+        const analysis = await AnalysisEntity.findByPk(analysisId);
+
+        for (const part of allParts) {
+            const result = calculateRelativeTimes(part, analysis);
+            const partResponse = {
+                id: part.id,
+                started: part.started,
+                stopped: part.stopped,
+                username: part.username,
+                analysisId: part.analysisId,
+                tagId: part.tagId,
+                description: part.description,
+                relStarted: result.relStarted,
+                relStopped: result.relStopped
+            }
+
+            partsResponse.push(partResponse);
+        }
+
+        res.send(partsResponse);
     } catch (error) {
         res.sendStatus(400);
     }
@@ -40,7 +93,7 @@ router.get('/:id', async function (req, res) {
             }
         });
 
-        if(part.length === 0) {
+        if (part.length === 0) {
             res.sendStatus(400);
         } else {
             res.send(part);
@@ -49,5 +102,22 @@ router.get('/:id', async function (req, res) {
         res.sendStatus(400);
     }
 });
+
+function calculateRelativeTimes(part, analysis) {
+    let relStarted;
+    let relStopped;
+
+    if (part.started && analysis.started) {
+        relStarted = part.started.getTime() - analysis.started.getTime();
+    }
+
+    if (part.stopped && analysis.started) {
+        relStopped = part.stopped.getTime() - analysis.started.getTime();
+    }
+    return {
+        relStarted,
+        relStopped
+    }
+}
 
 module.exports = router;

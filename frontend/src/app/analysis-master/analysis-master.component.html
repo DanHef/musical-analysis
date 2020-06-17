@@ -1,5 +1,7 @@
-<mat-label>Analyse Session ID</mat-label>
-<input matInput placeholder="Session ID" [value]="analysisSessionID" (input)="analysisSessionID = $event.target.value">
+<mat-form-field style="margin: 20 0 0 20;">
+    <input matInput placeholder="Session ID" [value]="analysisSessionID"
+        (input)="analysisSessionID = $event.target.value">
+</mat-form-field>
 
 <br>
 <button mat-button (click)="createAnalysisSession()">Create Analysis Session</button>

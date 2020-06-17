@@ -14,10 +14,10 @@ router.post('/', function (req, res) {
 
     newAnalysis.save()
         .then(() => {
-            res.send("Analysis Created Successfully");
+            res.send(newAnalysis);
         })
         .catch(() => {
-            res.send('Analysis Creation Error');
+            res.sendStatus(409);
         });
 });
 
