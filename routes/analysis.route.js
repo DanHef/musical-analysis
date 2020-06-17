@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { AnalysisEntity } = require('../model/model');
+const { AnalysisEntity, PartEntity } = require('../model/model');
 
 //create new analysis with name
 router.post('/', function (req, res) {
@@ -46,7 +46,7 @@ router.get('/', async function (req, res) {
     }
 });
 
-//get a single tag
+//get a single analysis
 router.get('/:id', async function (req, res) {
     try {
         const analysis = await AnalysisEntity.findAll({
@@ -57,6 +57,28 @@ router.get('/:id', async function (req, res) {
         res.send(analysis);
     } catch (error) {
         res.sendStatus(400);
+    }
+});
+
+
+// delete analysis
+router.delete('/:id', async function(req,res) {
+    try {
+        AnalysisEntity.destroy({
+            where: {
+                id: req.params.id
+            }
+        });
+
+        PartEntity.destroy({
+            where: {
+                analysisId: req.params.id
+            }
+        });
+    
+        res.send(204);
+    } catch(error) {
+        res.sendStatus(500);
     }
 });
 
