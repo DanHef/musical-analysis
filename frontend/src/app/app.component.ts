@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import WaveSurfer from 'wavesurfer.js';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
