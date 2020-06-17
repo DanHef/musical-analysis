@@ -9,10 +9,17 @@ import { FormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
+import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
+import { NavigationComponent } from './navigation/navigation.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    AnalysisClientComponent,
+    AnalysisMasterComponent,
+    NavigationComponent
   ],
   imports: [
     BrowserModule,
@@ -21,7 +28,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     FormsModule,
     HttpClientModule,
     MatButtonModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

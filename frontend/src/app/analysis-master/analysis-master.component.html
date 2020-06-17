@@ -1,0 +1,10 @@
+<mat-label>Analyse Session ID</mat-label>
+<input matInput placeholder="Session ID" [value]="analysisSessionID" (input)="analysisSessionID = $event.target.value">
+
+<br>
+<button mat-button (click)="createAnalysisSession()">Create Analysis Session</button>
+<br>
+<button mat-button (click)="startMusic()">Start</button>
+<button mat-button (click)="stopMusic()">Stop</button>
+
+<div id="wavesurfer"></div>
