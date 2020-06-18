@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { PartEntity, AnalysisEntity } = require('../model/model');
+const { PartEntity, AnalysisEntity, TagEntity } = require('../model/model');
 
 //create new part
 router.post('/', function (req, res) {
@@ -60,9 +60,12 @@ router.get('/', async function (req, res) {
         });
 
         const analysis = await AnalysisEntity.findByPk(analysisId);
+        
 
         for (const part of allParts) {
             const result = calculateRelativeTimes(part, analysis);
+            const tag = await TagEntity.findByPk(part.tagId);
+
             const partResponse = {
                 id: part.id,
                 started: part.started,
@@ -70,6 +73,7 @@ router.get('/', async function (req, res) {
                 username: part.username,
                 analysisId: part.analysisId,
                 tagId: part.tagId,
+                tagDescription: tag ? tag.description : '',
                 description: part.description,
                 relStarted: result.relStarted,
                 relStopped: result.relStopped

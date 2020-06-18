@@ -11,16 +11,18 @@ export class AnalysisClientComponent implements OnInit {
   username = '';
   seletedAnalysisSessionID: string;
   analysis;
+  tags = [];
   userParts;
-  displayedColumns: string[] = ['started', 'stopped', 'description'];
+  displayedColumns: string[] = ['started', 'stopped', 'tag', 'description'];
 
   constructor(private readonly httpClient: HttpClient) { }
 
   ngOnInit(): void {
     this.loadAvailableAnalysisSessions();
+    this.loadTags();
   }
 
-  public async markNewPart() {
+  public async markNewPart(tagId?: string) {
     const startedDate = this.userParts.length === 0 ? this.analysis.started : this.userParts[this.userParts.length - 1].stopped;
 
     const newPart = await this.httpClient.post(environment.apiEndpoint + '/parts', {
@@ -29,7 +31,7 @@ export class AnalysisClientComponent implements OnInit {
       username: this.username,
       analysisId: this.seletedAnalysisSessionID,
       description: '',
-      tagId: null
+      tagId
     }).toPromise();
 
     // refresh parts area
@@ -47,6 +49,10 @@ export class AnalysisClientComponent implements OnInit {
   private async loadPartsForUser() {
     // tslint:disable-next-line:max-line-length
     this.userParts = await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID ).toPromise();
+  }
+
+  private async loadTags() {
+    this.tags = await this.httpClient.get(environment.apiEndpoint + '/tags').toPromise() as Array<{}>;
   }
 
 }

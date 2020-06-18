@@ -15,7 +15,7 @@
 
 <br>
 
-<button mat-button (click)="markNewPart()" style="margin: 0px 0 0 20px;">Neuer Abschnitt</button>
+<button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)" style="margin: 0px 0 0 20px;">{{tag.description}}</button>
 
 <h2>Abschnitte</h2>
 
@@ -30,6 +30,12 @@
   <ng-container matColumnDef="stopped">
     <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
     <mat-cell *matCellDef="let element"> {{element.relStopped | date:'mm:ss'}} </mat-cell>
+  </ng-container>
+
+  <!-- Tag Column -->
+  <ng-container matColumnDef="tag">
+    <mat-header-cell *matHeaderCellDef>Kategorie</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.tagDescription}} </mat-cell>
   </ng-container>
 
   <!-- Description Column -->
