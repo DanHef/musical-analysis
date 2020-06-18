@@ -9,7 +9,7 @@
 </mat-form-field>
 
 <br>
-<button mat-button (click)="createAnalysisSession()">Create Analysis Session</button>
+<button mat-button (click)="createAnalysisSession()" disabled="{{ analysisSessionID === '' }}">Create Analysis Session</button>
 <br>
 
 <h5>Erstellte Sessions</h5>
@@ -51,8 +51,8 @@
 
 <h2>Session - Audio Steuerung</h2>
 
-<button mat-button (click)="startMusic()">Start</button>
-<button mat-button (click)="stopMusic()">Stop</button>
+<button mat-button (click)="startMusic()" disabled="{{ analysisSessionID === '' }}">Start</button>
+<button mat-button (click)="stopMusic()" disabled="{{ analysisSessionID === '' }}">Stop</button>
 
 <div id="wavesurfer"></div>
 
