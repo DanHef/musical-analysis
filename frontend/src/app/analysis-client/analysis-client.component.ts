@@ -21,9 +21,11 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   public async markNewPart() {
+    const startedDate = this.userParts.length === 0 ? this.analysis.started : this.userParts[this.userParts.length - 1].stopped;
+
     const newPart = await this.httpClient.post(environment.apiEndpoint + '/parts', {
-      started: new Date().toISOString(),
-      stopped: null,
+      started: startedDate,
+      stopped: new Date().toISOString(),
       username: this.username,
       analysisId: this.seletedAnalysisSessionID,
       description: '',

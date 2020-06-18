@@ -29,7 +29,7 @@
   <!-- Stopped Column -->
   <ng-container matColumnDef="stopped">
     <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.stopped}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{element.relStopped | date:'mm:ss'}} </mat-cell>
   </ng-container>
 
   <!-- Description Column -->
