@@ -14,6 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+
 import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -37,7 +39,8 @@ import { NavigationComponent } from './navigation/navigation.component';
     MatSelectModule,
     MatInputModule,
     MatTableModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,61 +1,84 @@
-<h2>
-    Analyse Session Verwaltung
-</h2>
+<div style="width: 100%;">
+    <div style="width: 50%;" class="card">
+        <mat-card>
+            <mat-card-title>Neue Session</mat-card-title>
+            <mat-card-content>
+                <mat-form-field style="margin: 20 0 0 20;">
+                    <input matInput placeholder="Session ID" [value]="analysisSessionID"
+                        (input)="analysisSessionID = $event.target.value">
+                </mat-form-field>
 
-<h5>Neue Session</h5>
-<mat-form-field style="margin: 20 0 0 20;">
-    <input matInput placeholder="Session ID" [value]="analysisSessionID"
-        (input)="analysisSessionID = $event.target.value">
-</mat-form-field>
+                <br>
+                <button mat-button (click)="createAnalysisSession()" disabled="{{ analysisSessionID === '' }}">Create
+                    Analysis Session</button>
+                <br>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div style="width: 50%;" class="card">
+        <mat-card>
+            <mat-card-title>Session History</mat-card-title>
 
-<br>
-<button mat-button (click)="createAnalysisSession()" disabled="{{ analysisSessionID === '' }}">Create Analysis Session</button>
-<br>
+            <mat-card-content>
 
-<h5>Erstellte Sessions</h5>
+                <mat-table [dataSource]="analysis" class="mat-elevation-z8">
+                    <!-- ID Column -->
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{ element.id }} </mat-cell>
+                    </ng-container>
 
-<mat-table [dataSource]="analysis" class="mat-elevation-z8">
-    <!-- ID Column -->
-    <ng-container matColumnDef="id">
-        <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.id }} </mat-cell>
-    </ng-container>
+                    <!-- Started Column -->
+                    <ng-container matColumnDef="started">
+                        <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{ element.started | date:'medium' }} </mat-cell>
+                    </ng-container>
 
-    <!-- Started Column -->
-    <ng-container matColumnDef="started">
-        <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.started | date:'medium' }} </mat-cell>
-    </ng-container>
+                    <!-- Stopped Column -->
+                    <ng-container matColumnDef="stopped">
+                        <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.stopped | date:'medium' }} </mat-cell>
+                    </ng-container>
 
-    <!-- Stopped Column -->
-    <ng-container matColumnDef="stopped">
-        <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.stopped | date:'medium' }} </mat-cell>
-    </ng-container>
+                    <!-- Delete Column -->
+                    <ng-container matColumnDef="delete">
+                        <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <button mat-button (click)="onDelete(element)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </mat-cell>
+                        <!--<mat-cell *matCellDef="let element"> <i (click)="onDelete($event)" style="cursor: pointer;"
+                        class="material-icons">delete</i> </mat-cell>-->
+                    </ng-container>
 
-    <!-- Delete Column -->
-    <ng-container matColumnDef="delete">
-        <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <button mat-button (click)="onDelete(element)">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </mat-cell>
-        <!--<mat-cell *matCellDef="let element"> <i (click)="onDelete($event)" style="cursor: pointer;"
-                class="material-icons">delete</i> </mat-cell>-->
-    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
 
-<h2>Session - Audio Steuerung</h2>
+<div style="width: 100%;" class="card">
+    <mat-card>
+        <mat-card-title>Session - Audio Steuerung</mat-card-title>
+        <mat-card-content>
 
-<button mat-button (click)="startMusic()" disabled="{{ analysisSessionID === '' }}">Start</button>
-<button mat-button (click)="stopMusic()" disabled="{{ analysisSessionID === '' }}">Stop</button>
+            <button mat-button (click)="startMusic()" disabled="{{ analysisSessionID === '' }}">Start</button>
+            <button mat-button (click)="stopMusic()" disabled="{{ analysisSessionID === '' }}">Stop</button>
 
-<div id="wavesurfer"></div>
+            <div id="wavesurfer"></div>
+        </mat-card-content>
+    </mat-card>
+</div>
 
-<h2>Session - Auswertung</h2>
-
-TBD
+<div style="width: 100%;" class="card">
+    <mat-card>
+        <mat-card-title>Session - Auswertung</mat-card-title>
+        <mat-card-content>
+            TBD
+        </mat-card-content>
+    </mat-card>
+</div>
