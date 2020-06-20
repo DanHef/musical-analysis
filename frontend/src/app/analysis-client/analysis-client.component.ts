@@ -49,7 +49,7 @@ export class AnalysisClientComponent implements OnInit {
 
     const dialogRef = this.dialog.open(EditPartDialogComponent, {
       width: '250px',
-      data: { tag: part.tagId, tagDescription: part.tagDescription, description: part.description, tags: this.tags }
+      data: { tagId: part.tagId, tagDescription: part.tagDescription, description: part.description, tags: this.tags }
     });
 
     dialogRef.afterClosed().subscribe(async function(result) {
@@ -58,7 +58,7 @@ export class AnalysisClientComponent implements OnInit {
 
       await this.updatePart(part);
       await this.loadPartsForUser();
-    });
+    }.bind(this));
   }
 
   private async loadAvailableAnalysisSessions() {

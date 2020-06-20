@@ -8,22 +8,19 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
     templateUrl: 'edit-part.dialog.html',
 })
 export class EditPartDialogComponent {
-    description: string;
-    tagDescription: string;
-    tagId: number;
+    componentData;
     tags;
 
     constructor(
         public dialogRef: MatDialogRef<EditPartDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data) {
-            this.description = data.description;
-            this.tagDescription = data.tagDescription;
-            this.tagId = data.tagId;
+        this.componentData = data;
 
-            this.tags = data.tags;
+        this.tags = data.tags;
     }
 
-    onNoClick(): void {
+
+    public onNoClick(): void {
         this.dialogRef.close();
     }
 }
