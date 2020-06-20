@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import WaveSurfer from 'wavesurfer.js';
 import { environment } from '../../environments/environment';
+import TimelinesChart, { Group } from 'timelines-chart';
 
 @Component({
   selector: 'app-analysis-master',
@@ -16,6 +17,7 @@ export class AnalysisMasterComponent implements OnInit {
   analysis;
   statistics;
   displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
+  timelineChart;
 
   constructor(private readonly httpClient: HttpClient) { }
 
@@ -68,6 +70,42 @@ export class AnalysisMasterComponent implements OnInit {
 
   public onSessionSelected() {
     this.loadAnalysisById(this.seletedAnalysisSessionID);
+  }
+
+  public async onStatisticsRefresh() {
+    const statisticsData = await this.loadAnalysisStatistics();
+    const myData = [];
+
+    // tslint:disable-next-line:forin
+    for (const user in statisticsData) {
+      const userParts = statisticsData[user];
+      const groupData = [];
+
+      for (const part of userParts) {
+        groupData.push({
+          label: part.tagDescription,
+          data: [
+            {
+              timeRange: [part.started, part.stopped],
+              val: part.description
+            }
+          ]
+        });
+      }
+      const statisticsGroup: Group = {
+        group: user,
+        data: groupData
+      };
+
+      myData.push(statisticsGroup);
+    }
+
+    if (!this.timelineChart) {
+      // tslint:disable-next-line:max-line-length
+      this.timelineChart = TimelinesChart()(document.getElementById('statistics')).enableOverview(false).timeFormat('%M:%S').data(myData).rightMargin(200).refresh();
+    } else {
+      this.timelineChart.data(myData).refresh();
+    }
   }
 
   private async loadAnalysis() {

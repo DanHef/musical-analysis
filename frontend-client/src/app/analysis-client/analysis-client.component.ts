@@ -26,7 +26,7 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   public async markNewPart(tagId?: string) {
-    const startedDate = this.userParts.length === 0 ? this.analysis.started : this.userParts[this.userParts.length - 1].stopped;
+    const startedDate = this.userParts.length === 0 ? this.selectedAnalysis.started : this.userParts[this.userParts.length - 1].stopped;
 
     const newPart = await this.httpClient.post(environment.apiEndpoint + '/parts', {
       started: startedDate,

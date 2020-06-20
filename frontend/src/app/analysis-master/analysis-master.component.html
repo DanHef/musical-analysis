@@ -90,7 +90,9 @@
     <mat-card>
         <mat-card-title>Session - Auswertung</mat-card-title>
         <mat-card-content>
-            TBD
+            <button mat-raised-button (click)="onStatisticsRefresh()">Refresh</button>
+            
+            <div id="statistics"></div>
         </mat-card-content>
     </mat-card>
 </div>

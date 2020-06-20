@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { AnalysisEntity, PartEntity, AnalysisUserEntity } = require('../model/model');
+const { AnalysisEntity, PartEntity, AnalysisUserEntity, TagEntity } = require('../model/model');
 
 // create user analysis relation with status
 router.post('/:analysisId/user', function (req, res) {
@@ -123,7 +123,18 @@ router.get('/:id/statistics', async function (req, res) {
             if (!statisticsResponse[part.username]) {
                 statisticsResponse[part.username] = [];
             }
-            statisticsResponse[part.username].push(part);
+
+            const tag = await TagEntity.findByPk(part.tagId);
+
+            const newStatisticPart = {
+                started: part.started,
+                stopped: part.stopped,
+                description: part.description,
+                tagId: part.tagId,
+                tagDescription: tag.description
+            };
+
+            statisticsResponse[part.username].push(newStatisticPart);
         }
 
         res.send(statisticsResponse);
