@@ -17,18 +17,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { EditPartDialogComponent } from './edit-part/edit-part.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AnalysisClientComponent,
     AnalysisMasterComponent,
-    NavigationComponent,
-    EditPartDialogComponent
+    NavigationComponent
   ],
   imports: [
     BrowserModule,
