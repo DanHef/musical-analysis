@@ -75,6 +75,7 @@ router.get('/', async function (req, res) {
                 tagId: part.tagId,
                 tagDescription: tag ? tag.description : '',
                 description: part.description,
+                submitted: part.submitted,
                 relStarted: result.relStarted,
                 relStopped: result.relStopped
             }

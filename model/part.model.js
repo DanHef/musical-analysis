@@ -1,7 +1,7 @@
 module.exports = (sequelize, type) => {
     return sequelize.define('part', {
         id: {
-            type: type.INTEGER, 
+            type: type.INTEGER,
             autoIncrement: true,
             allowNull: false,
             primaryKey: true
@@ -11,6 +11,10 @@ module.exports = (sequelize, type) => {
         username: type.STRING,
         analysisId: type.STRING,
         description: type.STRING,
-        tagId: type.INTEGER
+        tagId: type.INTEGER,
+        submitted: {
+            type: type.BOOLEAN,
+            defaultValue: false
+        }
     });
 };

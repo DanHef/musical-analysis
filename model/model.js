@@ -13,7 +13,9 @@ const AnalysisEntity = AnalysisModel(sequelize, Sequelize);
 const PartEntity = PartModel(sequelize, Sequelize);
 const TagEntity = TagModel(sequelize, Sequelize);
 
-sequelize.sync();
+sequelize.sync({
+    alter: true
+});
 
 module.exports = {
     AnalysisEntity,
