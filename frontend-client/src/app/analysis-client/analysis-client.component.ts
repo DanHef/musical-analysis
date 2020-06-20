@@ -45,6 +45,19 @@ export class AnalysisClientComponent implements OnInit {
     this.loadPartsForUser();
   }
 
+  public onSubmitParts() {
+    const allPartChanges = [];
+    for (const part of this.userParts) {
+      allPartChanges.push(this.httpClient.put(environment.apiEndpoint + '/parts/' + part.id, {
+        submitted: true
+      }).toPromise());
+    }
+
+    Promise.all(allPartChanges).then(() => {
+      this.loadPartsForUser();
+    });
+  }
+
   public onEdit(part) {
 
     const dialogRef = this.dialog.open(EditPartDialogComponent, {
