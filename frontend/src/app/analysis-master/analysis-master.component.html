@@ -9,7 +9,7 @@
                 </mat-form-field>
 
                 <br>
-                <button mat-button (click)="createAnalysisSession()" disabled="{{ analysisSessionID === '' }}">Create
+                <button mat-button class="mat-raised-button mat-primary" (click)="createAnalysisSession()" disabled="{{ analysisSessionID === '' }}">Create
                     Analysis Session</button>
                 <br>
             </mat-card-content>
@@ -44,7 +44,7 @@
                     <ng-container matColumnDef="delete">
                         <mat-header-cell *matHeaderCellDef>Löschen</mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <button mat-button (click)="onDelete(element)">
+                            <button mat-button class="mat-flat-button" (click)="onDelete(element)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </mat-cell>
@@ -64,8 +64,8 @@
         <mat-card-title>Session - Audio Steuerung</mat-card-title>
         <mat-card-content>
 
-            <button mat-button (click)="startMusic()" disabled="{{ analysisSessionID === '' }}">Start</button>
-            <button mat-button (click)="stopMusic()" disabled="{{ analysisSessionID === '' }}">Stop</button>
+            <button mat-button class="mat-raised-button" (click)="startMusic()" disabled="{{ analysisSessionID === '' }}">Start</button>
+            <button mat-button class="mat-raised-button" (click)="stopMusic()" disabled="{{ analysisSessionID === '' }}">Stop</button>
 
             <div id="wavesurfer"></div>
         </mat-card-content>
