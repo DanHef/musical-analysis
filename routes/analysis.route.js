@@ -91,23 +91,52 @@ router.get('/:id/user/:username', async function (req, res) {
     }
 });
 
+
+//get statistics for analysis
+router.get('/:id/statistics', async function (req, res) {
+    try {
+        const analysisUser = await AnalysisUserEntity.findAll({
+            where: {
+                analysisId: req.params.id,
+                status: 1
+            }
+        });
+
+        let usernames = [];
+        for (singleAnalysisUser of analysisUser) {
+            usernames.push(singleAnalysisUser.username);
+        }
+
+        const allParts = await PartEntity.findAll({
+            where: {
+                analysisId: req.params.id,
+                username: usernames
+            }
+        });
+
+        let statisticsResponse = {};
+
+        for (const part of allParts) {
+            if (!statisticsResponse[part.username]) {
+                statisticsResponse[part.username] = [];
+            }
+            statisticsResponse[part.username].push(part);
+        }
+
+        res.send(statisticsResponse);
+    } catch (error) {
+        res.sendStatus(400);
+    }
+});
+
+
 //get a single analysis
 router.get('/:id', async function (req, res) {
     try {
         const analysis = await AnalysisEntity.findAll({
             where: {
                 id: req.params.id
-            },
-            include: [
-                {
-                    model: AnalysisUserEntity, as: 'analysisUser',
-                    where: {
-                        analysisId: req.params.id,
-                        is_vertify: 1
-                    },
-                    required: false
-                }
-            ]
+            }
         });
         res.send(analysis);
     } catch (error) {
