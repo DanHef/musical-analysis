@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiEndpoint: 'http://molle.heffter.net/api/v1'
+  apiEndpoint: 'http://musical-analysis.heffter.net/api/v1'
 };
