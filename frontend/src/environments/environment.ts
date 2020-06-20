@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiEndpoint: 'http://localhost:4500/api/v1'
+  apiEndpoint: 'http://localhost:4500/api/v1',
+  audioEndpoint: 'http://localhost:4500/local-audio'
 };
 
 /*

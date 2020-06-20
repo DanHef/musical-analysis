@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import WaveSurfer from 'wavesurfer.js';
+import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
+import RegionPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions.min.js';
+import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.js';
 import { environment } from '../../environments/environment';
 import TimelinesChart, { Group } from 'timelines-chart';
 
@@ -23,10 +26,20 @@ export class AnalysisMasterComponent implements OnInit {
 
   public ngOnInit() {
     this.wavesurfer = WaveSurfer.create({
-      container: '#wavesurfer'
+      container: '#wavesurfer',
+      barHeight: 4,
+      plugins: [
+        CursorPlugin.create(),
+        RegionPlugin.create({
+          dragSelection: true
+        }),
+        TimelinePlugin.create({
+          container: '#wavesurfer-timeline'
+        })
+      ]
     });
 
-    this.wavesurfer.load('http://musical-analysis.moderator.heffter.net/audio/Strophen-Holz.mp3');
+    this.wavesurfer.load(environment.audioEndpoint + '/Strophen-Holz.mp3');
 
     this.loadAnalysis();
   }
@@ -106,6 +119,19 @@ export class AnalysisMasterComponent implements OnInit {
     } else {
       this.timelineChart.data(myData).refresh();
     }
+  }
+
+
+  public onAudioPlay() {
+    this.wavesurfer.play();
+  }
+
+  public onAudioPause() {
+    this.wavesurfer.pause();
+  }
+
+  public onAudioStop() {
+    this.wavesurfer.stop();
   }
 
   private async loadAnalysis() {

@@ -73,26 +73,44 @@
 
 <div style="width: 100%;" class="card">
     <mat-card>
-        <mat-card-title>Session - Audio Steuerung</mat-card-title>
+        <mat-card-header>
+			<mat-card-title>
+				Session - Audio Steuerung
+			</mat-card-title>
+		</mat-card-header>
         <mat-card-content>
+            <div style="margin-bottom: 20px;">
+                <button mat-raised-button (click)="onAudioPlay()" class="audio-button">Play</button>
+                <button mat-raised-button (click)="onAudioPause()" class="audio-button">Pause</button>
+                <button mat-raised-button (click)="onAudioStop()" class="audio-button">Stop</button>
+                <button mat-raised-button class="audio-button" (click)="startMusic()"
+                    disabled="{{ selectedAnalysis && selectedAnalysis.started !== null }}">Start Analyse
+                    Session</button>
 
-            <button mat-button class="mat-raised-button" (click)="startMusic()"
-                disabled="{{ selectedAnalysis && selectedAnalysis.started !== null }}">Start</button>
-            <button mat-button class="mat-raised-button" (click)="stopMusic()"
-                disabled="{{ ( selectedAnalysis && selectedAnalysis.started === null ) || ( selectedAnalysis && selectedAnalysis.stopped !== null ) }}">Stop</button>
+                <button mat-raised-button class="audio-button" (click)="stopMusic()"
+                    disabled="{{ ( selectedAnalysis && selectedAnalysis.started === null ) || ( selectedAnalysis && selectedAnalysis.stopped !== null ) }}">Stop
+                    Analyse Session</button>
+            </div>
 
             <div id="wavesurfer"></div>
+            <div id="wavesurfer-timeline"></div>
         </mat-card-content>
     </mat-card>
 </div>
 
 <div style="width: 100%;" class="card">
     <mat-card>
-        <mat-card-title>Session - Auswertung</mat-card-title>
+        <mat-card-header>
+			<mat-card-title>
+				Session - Auswertung
+			</mat-card-title>
+			<span fxFlex></span>
+				<button mat-raised-button
+				(click)="onStatisticsRefresh()">Refresh
+				</button>
+		</mat-card-header>
         <mat-card-content>
-            <button mat-raised-button (click)="onStatisticsRefresh()">Refresh</button>
-            
-            <div id="statistics"></div>
+            <div style="margin-top: 20px;" id="statistics"></div>
         </mat-card-content>
     </mat-card>
 </div>
