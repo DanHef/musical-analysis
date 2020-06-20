@@ -11,7 +11,6 @@ export class NavigationComponent implements OnInit {
   constructor(private readonly router: Router) { }
 
   ngOnInit(): void {
-    this.router.navigate(['/analysis-master']);
   }
 
 }

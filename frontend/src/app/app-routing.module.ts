@@ -5,8 +5,13 @@ import { NavigationComponent } from './navigation/navigation.component';
 
 
 const routes: Routes = [
-  { path: 'analysis-master', component: AnalysisMasterComponent },
-  { path: 'main', component: NavigationComponent },
+  {
+    path: 'main', component: NavigationComponent,
+    children: [
+      { path: 'analysis-master', component: AnalysisMasterComponent },
+      { path: '', redirectTo: 'analysis-master', pathMatch: 'full' }
+    ]
+  },
   { path: '', redirectTo: 'main', pathMatch: 'full' }
 ];
 
