@@ -5,9 +5,14 @@ import { NavigationComponent } from './navigation/navigation.component';
 
 
 const routes: Routes = [
-  { path: 'analysis-client', component: AnalysisClientComponent },
-  { path: 'main', component: NavigationComponent },
-  { path: '', redirectTo: 'main', pathMatch: 'full'}
+  {
+    path: 'main', component: NavigationComponent,
+    children: [
+      { path: 'analysis-client', component: AnalysisClientComponent },
+      { path: '', redirectTo: 'analysis-client', pathMatch: 'full' }
+    ]
+  },
+  { path: '', redirectTo: 'main', pathMatch: 'full' }
 ];
 
 @NgModule({
