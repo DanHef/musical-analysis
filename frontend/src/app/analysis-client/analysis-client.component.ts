@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { EditPartDialogComponent } from '../edit-part/edit-part.component';
 
 @Component({
   selector: 'app-analysis-client',
@@ -13,9 +15,10 @@ export class AnalysisClientComponent implements OnInit {
   analysis;
   tags = [];
   userParts;
-  displayedColumns: string[] = ['started', 'stopped', 'tag', 'description'];
+  displayedColumns: string[] = ['started', 'stopped', 'tag', 'description', 'edit'];
 
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private readonly httpClient: HttpClient,
+              private readonly dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadAvailableAnalysisSessions();
@@ -42,17 +45,41 @@ export class AnalysisClientComponent implements OnInit {
     this.loadPartsForUser();
   }
 
+  public onEdit(part) {
+
+    const dialogRef = this.dialog.open(EditPartDialogComponent, {
+      width: '250px',
+      data: { tag: part.tagId, tagDescription: part.tagDescription, description: part.description, tags: this.tags }
+    });
+
+    dialogRef.afterClosed().subscribe(async function(result) {
+      part.description = result.description;
+      part.tagId = result.tagId;
+
+      await this.updatePart(part);
+      await this.loadPartsForUser();
+    });
+  }
+
   private async loadAvailableAnalysisSessions() {
     this.analysis = await this.httpClient.get(environment.apiEndpoint + '/analysis').toPromise();
   }
 
   private async loadPartsForUser() {
     // tslint:disable-next-line:max-line-length
-    this.userParts = await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID ).toPromise();
+    this.userParts = await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID).toPromise();
   }
 
   private async loadTags() {
     this.tags = await this.httpClient.get(environment.apiEndpoint + '/tags').toPromise() as Array<{}>;
+
+    return this.tags;
   }
 
+  private async updatePart(part) {
+    return this.httpClient.put(environment.apiEndpoint + '/parts/' + part.id, part).toPromise();
+  }
 }
+
+
+

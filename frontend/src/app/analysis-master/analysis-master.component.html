@@ -42,14 +42,12 @@
 
                     <!-- Delete Column -->
                     <ng-container matColumnDef="delete">
-                        <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
+                        <mat-header-cell *matHeaderCellDef>Löschen</mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             <button mat-button (click)="onDelete(element)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </mat-cell>
-                        <!--<mat-cell *matCellDef="let element"> <i (click)="onDelete($event)" style="cursor: pointer;"
-                        class="material-icons">delete</i> </mat-cell>-->
                     </ng-container>
 
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

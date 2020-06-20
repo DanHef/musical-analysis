@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Abschnitt ändern</h1>
+<mat-dialog-content>
+    <input matInput placeholder="Kategorie" [(ngModel)]="data.tagDescription">
+    <input matInput placeholder="Beschreibung" [(ngModel)]="data.description">
+</mat-dialog-content>
+<mat-dialog-actions>
+  <!--<button mat-button (click)="onNoClick()">No Thanks</button>-->
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>

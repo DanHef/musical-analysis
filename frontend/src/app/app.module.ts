@@ -15,17 +15,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
+import { EditPartDialogComponent } from './edit-part/edit-part.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AnalysisClientComponent,
     AnalysisMasterComponent,
-    NavigationComponent
+    NavigationComponent,
+    EditPartDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +43,8 @@ import { NavigationComponent } from './navigation/navigation.component';
     MatInputModule,
     MatTableModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
