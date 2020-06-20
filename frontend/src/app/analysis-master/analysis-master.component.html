@@ -1,17 +1,29 @@
 <div style="width: 100%;">
     <div style="width: 50%;" class="card">
         <mat-card>
-            <mat-card-title>Neue Session</mat-card-title>
-            <mat-card-content>
-                <mat-form-field style="margin: 20 0 0 20;">
-                    <input matInput placeholder="Session ID" [value]="analysisSessionID"
-                        (input)="analysisSessionID = $event.target.value">
-                </mat-form-field>
+            <mat-card-title>Session Management</mat-card-title>
+            <mat-card-content style="min-height: 100px;">
+                <div style="width: 50%; float: left;">
+                    <mat-form-field>
+                        <input matInput placeholder="Neue Session ID" [value]="analysisSessionID"
+                            (input)="analysisSessionID = $event.target.value">
+                    </mat-form-field>
 
-                <br>
-                <button mat-button class="mat-raised-button mat-primary" (click)="createAnalysisSession()" disabled="{{ analysisSessionID === '' }}">Create
-                    Analysis Session</button>
-                <br>
+                    <br>
+                    <button mat-button class="mat-raised-button mat-primary" (click)="createAnalysisSession()"
+                        disabled="{{ analysisSessionID === '' }}">Create
+                        Analysis Session</button>
+                </div>
+                <div style="width: 50%; float: left;">
+                    <mat-form-field style="margin: 0px 0 0 0px;">
+                        <mat-label>Analysis Session ID</mat-label>
+                        <mat-select [(value)]="seletedAnalysisSessionID" (selectionChange)="onSessionSelected()">
+                            <mat-option *ngFor="let analysisItem of analysis" [value]="analysisItem.id">
+                                {{analysisItem.id}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
             </mat-card-content>
         </mat-card>
     </div>
@@ -64,8 +76,10 @@
         <mat-card-title>Session - Audio Steuerung</mat-card-title>
         <mat-card-content>
 
-            <button mat-button class="mat-raised-button" (click)="startMusic()" disabled="{{ analysisSessionID === '' }}">Start</button>
-            <button mat-button class="mat-raised-button" (click)="stopMusic()" disabled="{{ analysisSessionID === '' }}">Stop</button>
+            <button mat-button class="mat-raised-button" (click)="startMusic()"
+                disabled="{{ selectedAnalysis && selectedAnalysis.started !== null }}">Start</button>
+            <button mat-button class="mat-raised-button" (click)="stopMusic()"
+                disabled="{{ ( selectedAnalysis && selectedAnalysis.started === null ) || ( selectedAnalysis && selectedAnalysis.stopped !== null ) }}">Stop</button>
 
             <div id="wavesurfer"></div>
         </mat-card-content>

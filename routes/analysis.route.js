@@ -31,7 +31,7 @@ router.post('/', function (req, res) {
 
     newAnalysis.save().then(() => {
         res.send(newAnalysis);
-    }).catch(() => {
+    }).catch((error) => {
         res.sendStatus(409);
     });
 });
@@ -39,16 +39,19 @@ router.post('/', function (req, res) {
 //update analysis
 router.put('/:id', async function (req, res) {
     const body = req.body;
+    try {
+        await AnalysisEntity.update(
+            {
+                started: body.started,
+                stopped: body.stopped
+            },
+            { where: { id: req.params.id } }
+        )
 
-    await AnalysisEntity.update(
-        {
-            started: body.started,
-            stopped: body.stopped
-        },
-        { where: { id: req.params.id } }
-    )
-
-    res.sendStatus(204);
+        res.sendStatus(204);
+    } catch (error) {
+        res.sendStatus(409);
+    }
 });
 
 //get all analysis
@@ -133,11 +136,7 @@ router.get('/:id/statistics', async function (req, res) {
 //get a single analysis
 router.get('/:id', async function (req, res) {
     try {
-        const analysis = await AnalysisEntity.findAll({
-            where: {
-                id: req.params.id
-            }
-        });
+        const analysis = await AnalysisEntity.findByPk(req.params.id);
         res.send(analysis);
     } catch (error) {
         res.sendStatus(400);

@@ -6,11 +6,8 @@ import { Router } from '@angular/router';
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.css']
 })
-export class NavigationComponent implements OnInit {
+export class NavigationComponent {
 
-  constructor(private readonly router: Router) { }
-
-  ngOnInit(): void {
-  }
+  constructor() { }
 
 }

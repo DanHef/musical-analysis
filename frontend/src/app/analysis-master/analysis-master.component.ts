@@ -10,8 +10,11 @@ import { environment } from '../../environments/environment';
 })
 export class AnalysisMasterComponent implements OnInit {
   analysisSessionID = '';
+  seletedAnalysisSessionID = '';
+  selectedAnalysis;
   wavesurfer;
   analysis;
+  statistics;
   displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
 
   constructor(private readonly httpClient: HttpClient) { }
@@ -21,7 +24,7 @@ export class AnalysisMasterComponent implements OnInit {
       container: '#wavesurfer'
     });
 
-    this.wavesurfer.load('http://molle.heffter.net/audio/Strophen-Holz.mp3');
+    this.wavesurfer.load('http://musical-analysis.moderator.heffter.net/audio/Strophen-Holz.mp3');
 
     this.loadAnalysis();
   }
@@ -29,27 +32,31 @@ export class AnalysisMasterComponent implements OnInit {
   public createAnalysisSession() {
     this.httpClient.post(environment.apiEndpoint + '/analysis', {
       id: this.analysisSessionID
-    }).subscribe(() => {
-      this.loadAnalysis();
-    });
+    }).subscribe(async function() {
+      await this.loadAnalysis();
+      this.seletedAnalysisSessionID = this.analysisSessionID;
+      await this.loadAnalysisById(this.seletedAnalysisSessionID);
+    }.bind(this));
   }
 
   public async startMusic() {
-    await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.analysisSessionID, {
+    await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID, {
       started: new Date().toISOString()
-    }).subscribe(() => {
-      console.log('hello');
-    });
+    }).toPromise();
+
+    this.loadAnalysis();
+    this.loadAnalysisById(this.seletedAnalysisSessionID);
 
     this.wavesurfer.play();
   }
 
   public async stopMusic() {
-    await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.analysisSessionID, {
+    await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID, {
       stopped: new Date().toISOString()
-    }).subscribe(() => {
-      console.log('hello');
-    });
+    }).toPromise();
+
+    this.loadAnalysis();
+    this.loadAnalysisById(this.seletedAnalysisSessionID);
 
     this.wavesurfer.stop();
   }
@@ -59,8 +66,27 @@ export class AnalysisMasterComponent implements OnInit {
     this.loadAnalysis();
   }
 
+  public onSessionSelected() {
+    this.loadAnalysisById(this.seletedAnalysisSessionID);
+  }
+
   private async loadAnalysis() {
     this.analysis = await this.httpClient.get(environment.apiEndpoint + '/analysis').toPromise();
+
+    return this.analysis;
+  }
+
+  private async loadAnalysisById(analysisId) {
+    this.selectedAnalysis = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + analysisId).toPromise();
+
+    return this.selectedAnalysis;
+  }
+
+  private async loadAnalysisStatistics() {
+    // tslint:disable-next-line:max-line-length
+    this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID + '/statistics').toPromise();
+
+    return this.statistics;
   }
 
 }
