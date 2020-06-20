@@ -4,7 +4,7 @@
   </mat-card-title>
   <mat-card-content>
     <mat-form-field style="margin: 20px 0 0 20px;">
-      <input matInput placeholder="Username" [value]="username" (input)="username = $event.target.value">
+      <input matInput placeholder="Username" (change)="onUsernameChanged()" [value]="username" (input)="username = $event.target.value">
     </mat-form-field>
 
     <br>
@@ -26,7 +26,7 @@
   </mat-card-title>
   <mat-card-content>
 
-    <button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)"
+    <button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)" [disabled]="!selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1"
       style="margin: 20px 20px 20px 0px;" class="mat-raised-button">{{tag.description}}</button>
 
     <h2>Abschnitte</h2>
@@ -72,6 +72,6 @@
     </mat-table>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button class="mat-primary" [disabled]="!userParts || userParts?.length === 0 || userParts[0].submitted === true" (click)="onSubmitParts()">Ergebnis Abschicken</button>
+    <button mat-raised-button class="mat-primary" [disabled]="!userParts || userParts?.length === 0 || !selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1" (click)="onSubmitParts()">Ergebnis Abschicken</button>
   </mat-card-actions>
 </mat-card>

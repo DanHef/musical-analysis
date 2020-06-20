@@ -12,13 +12,13 @@ import { EditPartDialogComponent } from '../edit-part/edit-part.component';
 export class AnalysisClientComponent implements OnInit {
   username = '';
   seletedAnalysisSessionID: string;
+  selectedAnalysis;
   analysis;
   tags = [];
   userParts;
   displayedColumns: string[] = ['started', 'stopped', 'tag', 'description', 'edit'];
 
-  constructor(private readonly httpClient: HttpClient,
-              private readonly dialog: MatDialog) { }
+  constructor(private readonly httpClient: HttpClient, private readonly dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadAvailableAnalysisSessions();
@@ -42,6 +42,12 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   public onSessionSelected() {
+    this.loadAnalysis();
+    this.loadPartsForUser();
+  }
+
+  public onUsernameChanged() {
+    this.loadAnalysis();
     this.loadPartsForUser();
   }
 
@@ -53,7 +59,13 @@ export class AnalysisClientComponent implements OnInit {
       }).toPromise());
     }
 
+    allPartChanges.push(this.httpClient.post(environment.apiEndpoint + '/analysis/' + this.selectedAnalysis.id + '/user', {
+      username: this.username,
+      status: 1
+    }).toPromise());
+
     Promise.all(allPartChanges).then(() => {
+      this.loadAnalysis();
       this.loadPartsForUser();
     });
   }
@@ -79,8 +91,12 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   private async loadPartsForUser() {
-    // tslint:disable-next-line:max-line-length
-    this.userParts = await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID).toPromise();
+    if (this.username && this.seletedAnalysisSessionID) {
+      // tslint:disable-next-line:max-line-length
+      this.userParts = await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID).toPromise();
+    } else {
+      this.userParts = null;
+    }
   }
 
   private async loadTags() {
@@ -89,8 +105,19 @@ export class AnalysisClientComponent implements OnInit {
     return this.tags;
   }
 
-  private async updatePart(part) {
+  private updatePart(part) {
     return this.httpClient.put(environment.apiEndpoint + '/parts/' + part.id, part).toPromise();
+  }
+
+  private async loadAnalysis() {
+    if (this.username && this.seletedAnalysisSessionID) {
+      // tslint:disable-next-line:max-line-length
+      this.selectedAnalysis = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID + '/user/' + this.username).toPromise();
+
+      return this.selectedAnalysis;
+    } else {
+      this.selectedAnalysis = null;
+    }
   }
 }
 
