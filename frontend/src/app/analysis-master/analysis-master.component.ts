@@ -39,7 +39,7 @@ export class AnalysisMasterComponent implements OnInit {
       ]
     });
 
-    this.wavesurfer.load(environment.audioEndpoint + '/Strophen-Holz.mp3');
+    this.wavesurfer.load(environment.audioEndpoint + '/Trauer-Anfang.mp3');
 
     this.loadAnalysis();
   }
