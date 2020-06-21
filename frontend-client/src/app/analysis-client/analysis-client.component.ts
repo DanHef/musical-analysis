@@ -15,7 +15,7 @@ export class AnalysisClientComponent implements OnInit {
   selectedAnalysis;
   analysis;
   tags = [];
-  userParts;
+  userParts = [];
   displayedColumns: string[] = ['started', 'stopped', 'tag', 'description', 'edit'];
 
   constructor(private readonly httpClient: HttpClient, private readonly dialog: MatDialog) { }
@@ -26,7 +26,8 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   public async markNewPart(tagId?: string) {
-    const startedDate = this.userParts.length === 0 ? this.selectedAnalysis.started : this.userParts[this.userParts.length - 1].stopped;
+    // tslint:disable-next-line:max-line-length
+    const startedDate = ( !this.userParts || this.userParts.length === 0 ) ? this.selectedAnalysis.started : this.userParts[this.userParts.length - 1].stopped;
 
     const newPart = await this.httpClient.post(environment.apiEndpoint + '/parts', {
       started: startedDate,
@@ -93,7 +94,7 @@ export class AnalysisClientComponent implements OnInit {
   private async loadPartsForUser() {
     if (this.username && this.seletedAnalysisSessionID) {
       // tslint:disable-next-line:max-line-length
-      this.userParts = await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID).toPromise();
+      this.userParts = (await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID).toPromise()) as [];
     } else {
       this.userParts = null;
     }

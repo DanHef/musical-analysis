@@ -8,7 +8,7 @@ router.post('/', function (req, res) {
 
     const newPart = new PartEntity({
         id: body.id,
-        started: body.started,
+        started: body.started || new Date(),
         stopped: body.stopped,
         username: body.username,
         analysisId: body.analysisId,
