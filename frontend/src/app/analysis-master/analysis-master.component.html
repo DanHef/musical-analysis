@@ -74,10 +74,10 @@
 <div style="width: 100%;" class="card">
     <mat-card>
         <mat-card-header>
-			<mat-card-title>
-				Session - Audio Steuerung
-			</mat-card-title>
-		</mat-card-header>
+            <mat-card-title>
+                Session - Audio Steuerung
+            </mat-card-title>
+        </mat-card-header>
         <mat-card-content>
             <div style="margin-bottom: 20px;">
                 <button mat-raised-button (click)="onAudioPlay()" class="audio-button">Play</button>
@@ -101,16 +101,43 @@
 <div style="width: 100%;" class="card">
     <mat-card>
         <mat-card-header>
-			<mat-card-title>
-				Session - Auswertung
-			</mat-card-title>
-			<span fxFlex></span>
-				<button mat-raised-button
-				(click)="onStatisticsRefresh()">Refresh
-				</button>
-		</mat-card-header>
+            <mat-card-title>
+                Session - Auswertung
+            </mat-card-title>
+            <span fxFlex></span>
+            <button mat-raised-button (click)="onStatisticsRefresh()">Refresh
+            </button>
+        </mat-card-header>
         <mat-card-content>
             <div style="margin-top: 20px;" id="statistics"></div>
+            <div *ngFor="let userStatistics of statisticsData | keyvalue" style="height: 40px;margin-bottom: 10px;">
+                <div style="float: left; width: 100px;">{{ userStatistics.key}}</div>
+
+                <div *ngFor="let userPart of userStatistics.value.partData"
+                    [style.width.%]="(userPart.stopped - userPart.started) / userStatistics.value.sessionDuration * 100"
+                    [style.background-color]="userPart.tagId % 3 === 0 ? 'lightblue' : userPart.tagId % 3 === 1 ? 'orange' : 'lightgreen'"
+                    style="float: left; height: 30px; margin-bottom: 10px;"
+                    
+                    [mdePopoverTriggerFor]="appPopover"
+                        mdePopoverTriggerOn="hover" #popoverTrigger="mdePopoverTrigger">
+
+                    <div *ngIf="userPart.description" style="margin-left: 10px; margin-top: 5px;">{{userPart.tagDescription}} ({{userPart.description}})
+                    </div>
+                    <div *ngIf="!userPart.description" style="margin-left: 10px; margin-top: 5px;">{{userPart.tagDescription}}</div>
+
+                    <mde-popover #appPopover="mdePopover" [mdePopoverOverlapTrigger]="false">
+                        <mat-card style="max-width: 300px">
+                            <mat-card-content>
+                                Start: {{ userPart.startDate | date:'mm:ss' }}
+
+                                <br>
+
+                                Ende: {{ userPart.stopDate | date:'mm:ss' }}
+                            </mat-card-content>
+                        </mat-card>
+                    </mde-popover>
+                </div>
+            </div>
         </mat-card-content>
     </mat-card>
 </div>

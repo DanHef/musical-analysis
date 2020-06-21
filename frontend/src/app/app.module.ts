@@ -16,6 +16,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MdePopoverModule } from '@material-extended/mde';
 
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
@@ -40,7 +42,9 @@ import { NavigationComponent } from './navigation/navigation.component';
     MatTableModule,
     MatIconModule,
     MatCardModule,
-    MatDialogModule
+    MatDialogModule,
+    MatGridListModule,
+    MdePopoverModule
   ],
   providers: [],
   bootstrap: [AppComponent]

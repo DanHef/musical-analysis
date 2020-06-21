@@ -21,6 +21,8 @@ export class AnalysisMasterComponent implements OnInit {
   statistics;
   displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
   timelineChart;
+  statisticsData;
+  sessionDurationInSeconds;
 
   constructor(private readonly httpClient: HttpClient) { }
 
@@ -86,8 +88,20 @@ export class AnalysisMasterComponent implements OnInit {
   }
 
   public async onStatisticsRefresh() {
-    const statisticsData = await this.loadAnalysisStatistics();
-    const myData = [];
+    this.statisticsData = await this.loadAnalysisStatistics();
+    this.loadAnalysisById(this.seletedAnalysisSessionID);
+
+    // tslint:disable-next-line:forin
+    for (const user in this.statisticsData) {
+      const userParts = this.statisticsData[user].partData;
+
+      for (const part of userParts) {
+        part.startDate = new Date(part.started);
+        part.stopDate = new Date(part.stopped);
+      }
+    }
+
+    /*const myData = [];
 
     // tslint:disable-next-line:forin
     for (const user in statisticsData) {
@@ -118,7 +132,7 @@ export class AnalysisMasterComponent implements OnInit {
       this.timelineChart = TimelinesChart()(document.getElementById('statistics')).enableOverview(false).timeFormat('%M:%S').data(myData).rightMargin(200).refresh();
     } else {
       this.timelineChart.data(myData).refresh();
-    }
+    }*/
   }
 
 

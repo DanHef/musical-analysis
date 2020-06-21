@@ -105,6 +105,8 @@ router.get('/:id/statistics', async function (req, res) {
             }
         });
 
+        const analysis = await AnalysisEntity.findByPk(req.params.id);
+
         let usernames = [];
         for (singleAnalysisUser of analysisUser) {
             usernames.push(singleAnalysisUser.username);
@@ -121,20 +123,23 @@ router.get('/:id/statistics', async function (req, res) {
 
         for (const part of allParts) {
             if (!statisticsResponse[part.username]) {
-                statisticsResponse[part.username] = [];
+                statisticsResponse[part.username] = {
+                    sessionDuration: analysis.stopped - analysis.started,
+                    partData: []
+                };
             }
 
             const tag = await TagEntity.findByPk(part.tagId);
 
             const newStatisticPart = {
-                started: part.started,
-                stopped: part.stopped,
+                started: ( part.started.getTime() - analysis.started.getTime() ),
+                stopped: ( part.stopped.getTime() - analysis.started.getTime() ),
                 description: part.description,
                 tagId: part.tagId,
                 tagDescription: tag.description
             };
 
-            statisticsResponse[part.username].push(newStatisticPart);
+            statisticsResponse[part.username].partData.push(newStatisticPart);
         }
 
         res.send(statisticsResponse);
