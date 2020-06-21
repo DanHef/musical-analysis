@@ -3,7 +3,7 @@ const router = express.Router();
 const { PartEntity, AnalysisEntity, TagEntity } = require('../model/model');
 
 //create new part
-router.post('/', function (req, res) {
+router.post('/', async function (req, res) {
     const body = req.body;
 
     const analysisSession = await AnalysisEntity.findByPk(body.analysisId);
