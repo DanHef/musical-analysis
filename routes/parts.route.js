@@ -6,23 +6,30 @@ const { PartEntity, AnalysisEntity, TagEntity } = require('../model/model');
 router.post('/', function (req, res) {
     const body = req.body;
 
-    const newPart = new PartEntity({
-        id: body.id,
-        started: body.started || new Date(),
-        stopped: body.stopped,
-        username: body.username,
-        analysisId: body.analysisId,
-        tagId: body.tagId,
-        description: body.description
-    });
+    const analysisSession = await AnalysisEntity.findByPk(body.analysisId);
 
-    newPart.save()
-        .then(() => {
-            res.send(newPart);
-        })
-        .catch((error) => {
-            res.sendStatus(409);
+    if(analysisSession.started) {
+        const newPart = new PartEntity({
+            id: body.id,
+            started: body.started || analysisSession.started,
+            stopped: body.stopped,
+            username: body.username,
+            analysisId: body.analysisId,
+            tagId: body.tagId,
+            description: body.description
         });
+    
+        newPart.save()
+            .then(() => {
+                res.send(newPart);
+            })
+            .catch((error) => {
+                res.sendStatus(409);
+            });
+    } else {
+        res.sendStatus(409);
+    }
+    
 });
 
 // update existing part
