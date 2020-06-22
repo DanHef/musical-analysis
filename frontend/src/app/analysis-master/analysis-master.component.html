@@ -109,21 +109,22 @@
             </button>
         </mat-card-header>
         <mat-card-content>
-            <div style="margin-top: 20px;" id="statistics"></div>
-            <div *ngFor="let userStatistics of statisticsData | keyvalue" style="height: 40px;margin-bottom: 10px;">
-                <div style="float: left; width: 100px;">{{ userStatistics.key}}</div>
+            <!--<div style="margin-top: 20px;" id="statistics"></div>-->
+            <div *ngFor="let userStatistics of statisticsData | keyvalue ; let i = index">
+                <div style="display:inline-block; width: 100px;">{{ userStatistics.key}}</div>
 
                 <div *ngFor="let userPart of userStatistics.value.partData"
-                    [style.width.%]="(userPart.stopped - userPart.started) / userStatistics.value.sessionDuration * 100"
-                    [style.background-color]="userPart.tagId % 3 === 0 ? 'lightblue' : userPart.tagId % 3 === 1 ? 'orange' : 'lightgreen'"
-                    style="float: left; height: 30px; margin-bottom: 10px;"
-                    
-                    [mdePopoverTriggerFor]="appPopover"
-                        mdePopoverTriggerOn="hover" #popoverTrigger="mdePopoverTrigger">
+                    [style.width.%]="((userPart.stopped - userPart.started) / userStatistics.value.sessionDuration * 100)"
+                    [style.background-color]="i % 3 === 0 ? 'lightblue' : i % 3 === 1 ? 'orange' : 'lightgreen'"
+                    style="display:inline-block; height: 30px;margin-top: 35px; border-right: 3px solid; text-align: right;"
+                    [mdePopoverTriggerFor]="appPopover" mdePopoverTriggerOn="hover" #popoverTrigger="mdePopoverTrigger">
 
-                    <div *ngIf="userPart.description" style="margin-left: 10px; margin-top: 5px;">{{userPart.tagDescription}} ({{userPart.description}})
+                    <div *ngIf="userPart.description" style="margin-left: 10px; margin-top: 5px;">
+                        {{userPart.tagDescription}} ({{userPart.description}})
                     </div>
-                    <div *ngIf="!userPart.description" style="margin-left: 10px; margin-top: 5px;">{{userPart.tagDescription}}</div>
+                    <div *ngIf="!userPart.description"
+                        style="margin-left: 10px; margin-top: 5px; position:relative; top: -25px;">
+                        {{userPart.tagDescription}}</div>
 
                     <mde-popover #appPopover="mdePopover" [mdePopoverOverlapTrigger]="false">
                         <mat-card style="max-width: 300px">
