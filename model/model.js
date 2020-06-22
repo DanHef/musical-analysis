@@ -16,7 +16,7 @@ const TagEntity = TagModel(sequelize, Sequelize);
 const AnalysisUserEntity = AnalysisUserModel(sequelize, Sequelize);
 
 sequelize.sync({
-    alter: true
+    //alter: true
 });
 
 module.exports = {
