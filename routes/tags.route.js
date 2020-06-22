@@ -3,7 +3,7 @@ const router = express.Router();
 const { TagEntity } = require('../model/model');
 
 // create tag
-router.post('/', async function(req, res) {
+router.post('/', async function (req, res) {
     const body = req.body;
 
     const newTag = new TagEntity({
@@ -20,12 +20,18 @@ router.post('/', async function(req, res) {
         });
 });
 
-router.delete('/:id', async function(req, res) {
-    TagEntity.destroy({
-        where: {
-            id: req.params.id
-        }
-    });
+router.delete('/:id', async function (req, res) {
+    try {
+        TagEntity.destroy({
+            where: {
+                id: req.params.id
+            }
+        });
+
+        res.sendStatus(204);
+    } catch(_error) {
+        res.sendStatus(409);
+    }
 });
 
 //get all tags
