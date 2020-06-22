@@ -100,39 +100,6 @@ export class AnalysisMasterComponent implements OnInit {
         part.stopDate = new Date(part.stopped);
       }
     }
-
-    /*const myData = [];
-
-    // tslint:disable-next-line:forin
-    for (const user in statisticsData) {
-      const userParts = statisticsData[user];
-      const groupData = [];
-
-      for (const part of userParts) {
-        groupData.push({
-          label: part.tagDescription,
-          data: [
-            {
-              timeRange: [part.started, part.stopped],
-              val: part.description
-            }
-          ]
-        });
-      }
-      const statisticsGroup: Group = {
-        group: user,
-        data: groupData
-      };
-
-      myData.push(statisticsGroup);
-    }
-
-    if (!this.timelineChart) {
-      // tslint:disable-next-line:max-line-length
-      this.timelineChart = TimelinesChart()(document.getElementById('statistics')).enableOverview(false).timeFormat('%M:%S').data(myData).rightMargin(200).refresh();
-    } else {
-      this.timelineChart.data(myData).refresh();
-    }*/
   }
 
 
