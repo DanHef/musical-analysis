@@ -49,7 +49,7 @@ export class AnalysisMasterComponent implements OnInit {
   public createAnalysisSession() {
     this.httpClient.post(environment.apiEndpoint + '/analysis', {
       id: this.analysisSessionID
-    }).subscribe(async function() {
+    }).subscribe(async function () {
       await this.loadAnalysis();
       this.seletedAnalysisSessionID = this.analysisSessionID;
       await this.loadAnalysisById(this.seletedAnalysisSessionID);
@@ -102,9 +102,30 @@ export class AnalysisMasterComponent implements OnInit {
     }
   }
 
-  getTopForPart(partId?) {
-    console.log("Top for Part");
+  getMarginForUserStatistic(username) {
+    let largestHeight = 0;
+    // tslint:disable-next-line:max-line-length
+    const children = document.getElementById('statistics_user_' + username) ? document.getElementById('statistics_user_' + username).children : null;
 
+    if (children) {
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < children.length; i++) {
+        const child: any = children[i];
+        if (child.nodeName === 'SPAN') {
+          console.log(child.children[0].offsetHeight);
+          if (largestHeight < child.children[0].offsetHeight) {
+            largestHeight = child.children[0].offsetHeight;
+          }
+        }
+      }
+
+      return largestHeight + 25;
+    } else {
+      return 30;
+    }
+  }
+
+  getTopForPart(partId?) {
     const elementHeight = document.getElementById(partId) ? document.getElementById(partId).offsetHeight : 0;
 
     return elementHeight * -1;

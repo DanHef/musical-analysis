@@ -110,13 +110,14 @@
         </mat-card-header>
         <mat-card-content>
             <!--<div style="margin-top: 20px;" id="statistics"></div>-->
-            <div *ngFor="let userStatistics of statisticsData | keyvalue ; let i = index">
-                <div style="display:inline-block; width: 100px;">{{ userStatistics.key}}</div>
+            <div id="statistics_user_{{userStatistics.key}}" *ngFor="let userStatistics of statisticsData | keyvalue ; let i = index" [style.margin-top.px]="getMarginForUserStatistic(userStatistics.key)">
+                <div style="display:inline-block; width: 100px;" >{{ userStatistics.key}}</div>
 
-                <span *ngFor="let userPart of userStatistics.value.partData"
+                <span  *ngFor="let userPart of userStatistics.value.partData"
                     [style.width.%]="((userPart.stopped - userPart.started) / userStatistics.value.sessionDuration * 100)"
                     [style.background-color]="i % 3 === 0 ? 'lightblue' : i % 3 === 1 ? 'orange' : 'lightgreen'"
-                    style="display:inline-block; height: 30px; margin-top: 50px; border-right: 3px solid; position: relative; "
+                    
+                    style="display:inline-block; height: 30px; border-right: 3px solid; position: relative; "
                     [mdePopoverTriggerFor]="appPopover" mdePopoverTriggerOn="hover" #popoverTrigger="mdePopoverTrigger">
 
                     <span id="{{userPart.id}}" *ngIf="userPart.description"
