@@ -132,6 +132,7 @@ router.get('/:id/statistics', async function (req, res) {
             const tag = await TagEntity.findByPk(part.tagId);
 
             const newStatisticPart = {
+                id: part.id,
                 started: ( part.started.getTime() - analysis.started.getTime() ),
                 stopped: ( part.stopped.getTime() - analysis.started.getTime() ),
                 description: part.description,
