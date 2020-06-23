@@ -102,6 +102,13 @@ export class AnalysisMasterComponent implements OnInit {
     }
   }
 
+  getTopForPart(partId?) {
+    console.log("Top for Part");
+
+    const elementHeight = document.getElementById(partId) ? document.getElementById(partId).offsetHeight : 0;
+
+    return elementHeight * -1;
+  }
 
   public onAudioPlay() {
     this.wavesurfer.play();
