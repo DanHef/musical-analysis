@@ -16,7 +16,7 @@ export class AnalysisClientComponent implements OnInit {
   analysis;
   tags = [];
   userParts = [];
-  displayedColumns: string[] = ['started', 'stopped', 'tag', 'description', 'edit'];
+  displayedColumns: string[] = ['stopped', 'tag', 'description', 'edit'];
 
   constructor(private readonly httpClient: HttpClient, private readonly dialog: MatDialog) { }
 
