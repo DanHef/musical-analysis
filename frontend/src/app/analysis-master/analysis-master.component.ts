@@ -119,9 +119,9 @@ export class AnalysisMasterComponent implements OnInit {
         }
       }
 
-      return largestHeight + 25;
+      return largestHeight + 15;
     } else {
-      return 30;
+      return 25;
     }
   }
 
