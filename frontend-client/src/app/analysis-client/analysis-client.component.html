@@ -22,14 +22,14 @@
 
 <mat-card style="margin: 20px;">
   <mat-card-title>
-    Session Abschnitte
+    Session Markierungen
   </mat-card-title>
   <mat-card-content>
 
     <button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)" [disabled]="!selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1"
       style="margin: 20px 20px 20px 0px;" class="mat-raised-button">{{tag.description}}</button>
 
-    <h2>Abschnitte</h2>
+    <h2>Markierungen</h2>
 
     <mat-table [dataSource]="userParts" class="mat-elevation-z8">
       <!-- Started Column -->
