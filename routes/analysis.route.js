@@ -164,13 +164,13 @@ router.get('/:id', async function (req, res) {
 // delete analysis
 router.delete('/:id', async function (req, res) {
     try {
-        AnalysisEntity.destroy({
+        await AnalysisEntity.destroy({
             where: {
                 id: req.params.id
             }
         });
 
-        PartEntity.destroy({
+        await PartEntity.destroy({
             where: {
                 analysisId: req.params.id
             }
