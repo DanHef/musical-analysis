@@ -109,7 +109,6 @@
             </button>
         </mat-card-header>
         <mat-card-content>
-            <!--<div style="margin-top: 20px;" id="statistics"></div>-->
             <div id="statistics_user_{{userStatistics.key}}" *ngFor="let userStatistics of statisticsData | keyvalue ; let i = index" [style.margin-top.px]="getMarginForUserStatistic(userStatistics.key)">
                 <div style="display:inline-block; width: 100px;" >{{ userStatistics.key}}</div>
 
@@ -122,13 +121,14 @@
 
                     <span id="{{userPart.id}}" *ngIf="userPart.description"
                         [style.top.px]="getTopForPart(userPart.id)" 
-                        style="position:absolute; vertical-align: bottom; width: 100%; text-align: right;">
+                        style="position:absolute; vertical-align: bottom; width: 100%; text-align: right; word-break: break-word;">
                         {{userPart.tagDescription}}*
                     </span>
                     <span id="{{userPart.id}}" *ngIf="!userPart.description"
                         [style.top.px]="getTopForPart(userPart.id)" 
-                        style="position:absolute; vertical-align: bottom; width: 100%; text-align: right;">
-                        {{userPart.tagDescription}}</span>
+                        style="position:absolute; vertical-align: bottom; width: 100%; text-align: right; word-break: break-word;">
+                        {{userPart.tagDescription}}
+                    </span>
 
                     <mde-popover #appPopover="mdePopover" [mdePopoverOverlapTrigger]="false">
                         <mat-card style="max-width: 300px">

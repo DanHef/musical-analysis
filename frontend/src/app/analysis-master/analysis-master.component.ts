@@ -49,7 +49,7 @@ export class AnalysisMasterComponent implements OnInit {
   public createAnalysisSession() {
     this.httpClient.post(environment.apiEndpoint + '/analysis', {
       id: this.analysisSessionID
-    }).subscribe(async function () {
+    }).subscribe(async function() {
       await this.loadAnalysis();
       this.seletedAnalysisSessionID = this.analysisSessionID;
       await this.loadAnalysisById(this.seletedAnalysisSessionID);
@@ -80,7 +80,7 @@ export class AnalysisMasterComponent implements OnInit {
 
   public async onDelete(analysis) {
     await this.httpClient.delete(environment.apiEndpoint + '/analysis/' + analysis.id).toPromise();
-    this.loadAnalysis();
+    await this.loadAnalysis();
   }
 
   public onSessionSelected() {
