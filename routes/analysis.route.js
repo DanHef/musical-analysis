@@ -124,7 +124,7 @@ router.get('/:id/statistics', async function (req, res) {
         for (const part of allParts) {
             if (!statisticsResponse[part.username]) {
                 statisticsResponse[part.username] = {
-                    sessionDuration: analysis.stopped - analysis.started,
+                    sessionDuration: analysis.stopped.getTime() - analysis.started.getTime(),
                     partData: []
                 };
             }

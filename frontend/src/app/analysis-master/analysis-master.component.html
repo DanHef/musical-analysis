@@ -113,7 +113,7 @@
                 <div style="display:inline-block; height: 100%; width: 100px; vertical-align: middle;" >{{ userStatistics.key}}</div>
 
                 <span  *ngFor="let userPart of userStatistics.value.partData"
-                    [style.width.%]="((userPart.stopped - userPart.started) / userStatistics.value.sessionDuration * 100)"
+                    [style.width.%]="((userPart.stopped - userPart.started) / userStatistics.value.sessionDuration * 80)"
                     [style.background-color]="i % 3 === 0 ? 'lightblue' : i % 3 === 1 ? 'orange' : 'lightgreen'"
                     
                     style="display:inline-block; height: 30px; border-right: 3px solid; position: relative; vertical-align: bottom;"
