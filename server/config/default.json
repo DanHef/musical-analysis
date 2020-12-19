@@ -48,5 +48,5 @@
       }
     }
   },
-  "mysql": "mysql://musi_cal:musi_cal@localhost:3306/feathers_test"
+  "mysql": "mysql://musi_cal:musi_cal@localhost:3306/musical_analysis"
 }

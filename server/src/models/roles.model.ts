@@ -5,42 +5,31 @@ import { Application } from '../declarations';
 
 export default function (app: Application) {
     const sequelizeClient: Sequelize = app.get('sequelizeClient');
-    const users = sequelizeClient.define('users', {
-
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
-        },
-        password: {
+    const roles = sequelizeClient.define('roles', {
+        name: {
+            primaryKey: true,
             type: DataTypes.STRING,
             allowNull: false
         },
-
-
-        googleId: { type: DataTypes.STRING },
-
-        facebookId: { type: DataTypes.STRING },
-
-        twitterId: { type: DataTypes.STRING },
-
+        permissions: {
+            type: DataTypes.STRING,
+            allowNull: true
+        }
     }, {
         hooks: {
             beforeCount(options: any) {
                 options.raw = true;
             }
         },
-        defaultScope: {
-            include: [{ all: true }],
-        }
+        timestamps: false
     });
 
     // eslint-disable-next-line no-unused-vars
-    (users as any).associate = function (models: any) {
+    (roles as any).associate = function (models: any) {
         // Define associations here
         // See http://docs.sequelizejs.com/en/latest/docs/associations/
-        models.users.belongsTo(models.roles);
+        models.roles.hasMany(models.users, {as: 'role'});
     };
 
-    return users;
+    return roles;
 }
