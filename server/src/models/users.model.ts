@@ -29,9 +29,6 @@ export default function (app: Application) {
             beforeCount(options: any) {
                 options.raw = true;
             }
-        },
-        defaultScope: {
-            include: [{ all: true }],
         }
     });
 
@@ -39,7 +36,10 @@ export default function (app: Application) {
     (users as any).associate = function (models: any) {
         // Define associations here
         // See http://docs.sequelizejs.com/en/latest/docs/associations/
-        models.users.belongsTo(models.roles);
+        models.users.belongsTo(models.roles, {as: 'role'});
+        models.users.belongsToMany(models.analysis_sessions, { through: 'session_assignees', foreignKey: 'analysis_session_id' });
+
+        users.addScope('auth', {include: [{model: models.roles, as: 'role'}]})
     };
 
     return users;

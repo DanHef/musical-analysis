@@ -28,7 +28,6 @@ export default function (app: Application) {
     (roles as any).associate = function (models: any) {
         // Define associations here
         // See http://docs.sequelizejs.com/en/latest/docs/associations/
-        models.roles.hasMany(models.users, {as: 'role'});
     };
 
     return roles;

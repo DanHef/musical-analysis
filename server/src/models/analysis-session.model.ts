@@ -25,6 +25,8 @@ export default function (app: Application) {
     (analysisSession as any).associate = function (models: any) {
         // Define associations here
         // See http://docs.sequelizejs.com/en/latest/docs/associations/
+        models.analysis_sessions.belongsTo(models.users, {as: 'moderator'});
+        models.analysis_sessions.belongsToMany(models.users, { through: 'session_assignees', foreignKey: 'assignee_id', as: 'assignees' });
     };
 
     return analysisSession;

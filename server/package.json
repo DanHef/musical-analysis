@@ -29,8 +29,8 @@
     "test:coverage": "nyc npm run mocha",
     "dev": "ts-node-dev --no-notify src/",
     "start": "npm run compile && node lib/",
-    "mocha": "NODE_ENV=test ts-mocha \"test/**/*.test.ts\" --recursive --exit",
-    "mocha:debug": "NODE_ENV=test ts-mocha -r -p tsconfig.json test/**/*.test.ts --inspect --exit",
+    "mocha": "NODE_ENV=test ts-mocha \"test/**/*.test.ts\" -p test/tsconfig.json --recursive --exit",
+    "mocha:debug": "NODE_ENV=test ts-mocha -r -p test/tsconfig.json test/**/*.test.ts --inspect --exit",
     "compile": "shx rm -rf lib/ && tsc"
   },
   "standard": {
@@ -65,7 +65,9 @@
     "@types/bluebird": "^3.5.33",
     "@types/compression": "^1.7.0",
     "@types/cors": "^2.8.9",
+    "@types/expect": "^24.3.0",
     "@types/jsonwebtoken": "^8.5.0",
+    "@types/mocha": "^8.2.0",
     "@types/serve-favicon": "^2.5.2",
     "@types/validator": "^10.11.3",
     "axios": "^0.21.0",

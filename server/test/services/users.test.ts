@@ -6,7 +6,7 @@ describe('\'users\' service', () => {
     let usersService;
     let rolesService;
 
-    before(async function() {
+    before(async function () {
         const sequelizeClient: Sequelize = app.get('sequelizeClient');
         await sequelizeClient.sync({ force: true });
 
@@ -19,21 +19,21 @@ describe('\'users\' service', () => {
         });
     });
 
-  it('registered the service', () => {
-    assert.ok(usersService, 'Registered the service');
-  });
-
-  it('creation of user', async function() {
-    const newUser = await usersService.create({
-        "email": "e@e.de",
-        "password": "abcd",
-        "roleName": "admin"
+    it('registered the service', () => {
+        assert.ok(usersService, 'Registered the service');
     });
 
-    assert.ok(newUser, 'New user exists');
-    assert.strictEqual(newUser.email, "e@e.de");
-    assert.strictEqual(newUser.roleName, 'admin');
+    it('creation of user', async function () {
+        const newUser = await usersService.create({
+            "email": "e@e.de",
+            "password": "abcd",
+            "roleName": "admin"
+        });
 
-    return;
-  });
+        assert.ok(newUser, 'New user exists');
+        assert.strictEqual(newUser.email, "e@e.de");
+        assert.strictEqual(newUser.roleName, 'admin');
+
+        return;
+    });
 });

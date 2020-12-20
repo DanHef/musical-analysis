@@ -8,6 +8,9 @@ export default function (app: Application) {
     logging: false,
     define: {
       freezeTableName: true
+    },
+    query: {
+        raw: true
     }
   });
   const oldSetup = app.setup;
@@ -26,7 +29,7 @@ export default function (app: Application) {
     });
 
     // Sync to the database
-    app.set('sequelizeSync', sequelize.sync());
+    app.set('sequelizeSync', sequelize.sync({alter: true}));
 
     return result;
   };
