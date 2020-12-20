@@ -1,1 +1,3 @@
-{}
+{
+    "mysql": "mysql://musi_cal:musi_cal@localhost:3306/musical_analysis_test"
+}

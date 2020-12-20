@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Mocha Tests",
+            "type": "node",
+            "args": [
+                "${workspaceFolder}/server/node_modules/ts-mocha/bin/ts-mocha",
+                "-r",
+                "ts-node/register",
+                "--timeout", "999999",
+                "-p", "${workspaceFolder}/server/tsconfig.json", "${workspaceFolder}/server/test/**/*.test.ts",
+            ],
+            "console": "integratedTerminal",
+            "protocol": "inspector",
+            "request": "launch"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
