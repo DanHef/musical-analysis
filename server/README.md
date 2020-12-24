@@ -1,45 +1,23 @@
-# server
+# musical-analysis
 
-> Server for Musical-Analysis
+Tool for Musical Analysis in Lectures
 
-## About
+## Setup Local Environment
 
-This project uses [Feathers](http://feathersjs.com). An open source web framework for building modern real-time applications.
+### Running Server and Clients
 
-## Getting Started
+#### Clients
 
-Getting up and running is as easy as 1, 2, 3.
+Change directory to frontend to start the moderator client. Execute ng serve.
 
-1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
-2. Install your dependencies
+Change directory to frontend-client to start the students client. Execute ng serve.
 
-    ```
-    cd path/to/server
-    npm install
-    ```
+If you want to run both at the same time add --port <differentPort> to the ng serve statement.
 
-3. Start your app
+#### Server
 
-    ```
-    npm start
-    ```
+Change directory to server and execute npm start or npm run dev for a watching changes session.
 
-## Testing
+### MySQL Database
 
-Simply run `npm test` and all your tests in the `test/` directory will be run.
-
-## Scaffolding
-
-Feathers has a powerful command line interface. Here are a few things it can do:
-
-```
-$ npm install -g @feathersjs/cli          # Install Feathers CLI
-
-$ feathers generate service               # Generate a new Service
-$ feathers generate hook                  # Generate a new Hook
-$ feathers help                           # Show all commands
-```
-
-## Help
-
-For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).
+Create new musical_analysis database: CREATE DATABASE musical_analysis;

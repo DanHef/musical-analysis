@@ -1,0 +1,419 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AnalysisSession {
+  id: ID!
+  name: String!
+}
+
+type AnalysisSessionAvgAggregate {
+  id: Float
+}
+
+type AnalysisSessionConnection {
+  """Array of edges."""
+  edges: [AnalysisSessionEdge!]!
+
+  """Paging information"""
+  pageInfo: PageInfo!
+}
+
+type AnalysisSessionCountAggregate {
+  id: Int
+  name: Int
+}
+
+input AnalysisSessionDeleteFilter {
+  and: [AnalysisSessionDeleteFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [AnalysisSessionDeleteFilter!]
+}
+
+type AnalysisSessionDeleteResponse {
+  id: ID
+  name: String
+}
+
+type AnalysisSessionEdge {
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+
+  """The node containing the AnalysisSession"""
+  node: AnalysisSession!
+}
+
+input AnalysisSessionFilter {
+  and: [AnalysisSessionFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [AnalysisSessionFilter!]
+}
+
+type AnalysisSessionMaxAggregate {
+  id: ID
+  name: String
+}
+
+type AnalysisSessionMinAggregate {
+  id: ID
+  name: String
+}
+
+input AnalysisSessionSort {
+  direction: SortDirection!
+  field: AnalysisSessionSortFields!
+  nulls: SortNulls
+}
+
+enum AnalysisSessionSortFields {
+  id
+  name
+}
+
+type AnalysisSessionSumAggregate {
+  id: Float
+}
+
+input AnalysisSessionUpdateFilter {
+  and: [AnalysisSessionUpdateFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [AnalysisSessionUpdateFilter!]
+}
+
+"""Cursor for paging through collections"""
+scalar ConnectionCursor
+
+input CreateAnalysisSession {
+  id: ID
+  name: String
+}
+
+input CreateManyAnalysisSessionsInput {
+  """Array of records to create"""
+  analysisSessions: [CreateAnalysisSession!]!
+}
+
+input CreateManyUsersInput {
+  """Array of records to create"""
+  users: [CreateUser!]!
+}
+
+input CreateOneAnalysisSessionInput {
+  """The record to create"""
+  analysisSession: CreateAnalysisSession!
+}
+
+input CreateOneUserInput {
+  """The record to create"""
+  user: CreateUser!
+}
+
+input CreateUser {
+  email: String
+  firstname: String
+  id: ID
+  lastname: String
+  username: String
+}
+
+input CursorPaging {
+  """Paginate after opaque cursor"""
+  after: ConnectionCursor
+
+  """Paginate before opaque cursor"""
+  before: ConnectionCursor
+
+  """Paginate first"""
+  first: Int
+
+  """Paginate last"""
+  last: Int
+}
+
+input DeleteManyAnalysisSessionsInput {
+  """Filter to find records to delete"""
+  filter: AnalysisSessionDeleteFilter!
+}
+
+type DeleteManyResponse {
+  """The number of records deleted."""
+  deletedCount: Int!
+}
+
+input DeleteManyUsersInput {
+  """Filter to find records to delete"""
+  filter: UserDeleteFilter!
+}
+
+input DeleteOneInput {
+  """The id of the record to delete."""
+  id: ID!
+}
+
+input IDFilterComparison {
+  eq: ID
+  gt: ID
+  gte: ID
+  iLike: ID
+  in: [ID!]
+  is: Boolean
+  isNot: Boolean
+  like: ID
+  lt: ID
+  lte: ID
+  neq: ID
+  notILike: ID
+  notIn: [ID!]
+  notLike: ID
+}
+
+type Mutation {
+  createManyAnalysisSessions(input: CreateManyAnalysisSessionsInput!): [AnalysisSession!]!
+  createManyUsers(input: CreateManyUsersInput!): [User!]!
+  createOneAnalysisSession(input: CreateOneAnalysisSessionInput!): AnalysisSession!
+  createOneUser(input: CreateOneUserInput!): User!
+  deleteManyAnalysisSessions(input: DeleteManyAnalysisSessionsInput!): DeleteManyResponse!
+  deleteManyUsers(input: DeleteManyUsersInput!): DeleteManyResponse!
+  deleteOneAnalysisSession(input: DeleteOneInput!): AnalysisSessionDeleteResponse!
+  deleteOneUser(input: DeleteOneInput!): UserDeleteResponse!
+  syncUsers(id: ID!): [User!]!
+  updateManyAnalysisSessions(input: UpdateManyAnalysisSessionsInput!): UpdateManyResponse!
+  updateManyUsers(input: UpdateManyUsersInput!): UpdateManyResponse!
+  updateOneAnalysisSession(input: UpdateOneAnalysisSessionInput!): AnalysisSession!
+  updateOneUser(input: UpdateOneUserInput!): User!
+}
+
+type PageInfo {
+  """The cursor of the last returned record."""
+  endCursor: ConnectionCursor
+
+  """true if paging forward and there are more records."""
+  hasNextPage: Boolean
+
+  """true if paging backwards and there are more records."""
+  hasPreviousPage: Boolean
+
+  """The cursor of the first returned record."""
+  startCursor: ConnectionCursor
+}
+
+type Query {
+  analysisSession(
+    """The id of the record to find."""
+    id: ID!
+  ): AnalysisSession
+  analysisSessions(
+    """Specify to filter the records returned."""
+    filter: AnalysisSessionFilter = {}
+
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to sort results."""
+    sorting: [AnalysisSessionSort!] = []
+  ): AnalysisSessionConnection!
+  user(
+    """The id of the record to find."""
+    id: ID!
+  ): User
+  users(
+    """Specify to filter the records returned."""
+    filter: UserFilter = {}
+
+    """Limit or page results."""
+    paging: CursorPaging = {first: 10}
+
+    """Specify to sort results."""
+    sorting: [UserSort!] = []
+  ): UserConnection!
+}
+
+"""Sort Directions"""
+enum SortDirection {
+  ASC
+  DESC
+}
+
+"""Sort Nulls Options"""
+enum SortNulls {
+  NULLS_FIRST
+  NULLS_LAST
+}
+
+input StringFieldComparison {
+  eq: String
+  gt: String
+  gte: String
+  iLike: String
+  in: [String!]
+  is: Boolean
+  isNot: Boolean
+  like: String
+  lt: String
+  lte: String
+  neq: String
+  notILike: String
+  notIn: [String!]
+  notLike: String
+}
+
+input UpdateAnalysisSession {
+  id: ID
+  name: String
+}
+
+input UpdateManyAnalysisSessionsInput {
+  """Filter used to find fields to update"""
+  filter: AnalysisSessionUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateAnalysisSession!
+}
+
+type UpdateManyResponse {
+  """The number of records updated."""
+  updatedCount: Int!
+}
+
+input UpdateManyUsersInput {
+  """Filter used to find fields to update"""
+  filter: UserUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateUser!
+}
+
+input UpdateOneAnalysisSessionInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateAnalysisSession!
+}
+
+input UpdateOneUserInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateUser!
+}
+
+input UpdateUser {
+  email: String
+  firstname: String
+  id: ID
+  lastname: String
+  username: String
+}
+
+type User {
+  email: String
+  firstname: String
+  id: ID!
+  lastname: String
+  username: String
+}
+
+type UserAvgAggregate {
+  id: Float
+}
+
+type UserConnection {
+  """Array of edges."""
+  edges: [UserEdge!]!
+
+  """Paging information"""
+  pageInfo: PageInfo!
+}
+
+type UserCountAggregate {
+  email: Int
+  firstname: Int
+  id: Int
+  lastname: Int
+  username: Int
+}
+
+input UserDeleteFilter {
+  and: [UserDeleteFilter!]
+  email: StringFieldComparison
+  firstname: StringFieldComparison
+  id: IDFilterComparison
+  lastname: StringFieldComparison
+  or: [UserDeleteFilter!]
+  username: StringFieldComparison
+}
+
+type UserDeleteResponse {
+  email: String
+  firstname: String
+  id: ID
+  lastname: String
+  username: String
+}
+
+type UserEdge {
+  """Cursor for this node."""
+  cursor: ConnectionCursor!
+
+  """The node containing the User"""
+  node: User!
+}
+
+input UserFilter {
+  and: [UserFilter!]
+  email: StringFieldComparison
+  firstname: StringFieldComparison
+  id: IDFilterComparison
+  lastname: StringFieldComparison
+  or: [UserFilter!]
+  username: StringFieldComparison
+}
+
+type UserMaxAggregate {
+  email: String
+  firstname: String
+  id: ID
+  lastname: String
+  username: String
+}
+
+type UserMinAggregate {
+  email: String
+  firstname: String
+  id: ID
+  lastname: String
+  username: String
+}
+
+input UserSort {
+  direction: SortDirection!
+  field: UserSortFields!
+  nulls: SortNulls
+}
+
+enum UserSortFields {
+  email
+  firstname
+  id
+  lastname
+  username
+}
+
+type UserSumAggregate {
+  id: Float
+}
+
+input UserUpdateFilter {
+  and: [UserUpdateFilter!]
+  email: StringFieldComparison
+  firstname: StringFieldComparison
+  id: IDFilterComparison
+  lastname: StringFieldComparison
+  or: [UserUpdateFilter!]
+  username: StringFieldComparison
+}
