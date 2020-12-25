@@ -9,6 +9,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnalysisSessionModule } from './analysis-session/analysis-session.module';
 import { AnalysisSessionEntity } from './analysis-session/analysis-session.entity';
 import { UserModule } from './user/user.module';
+import { PartModule } from './part/part.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -22,9 +24,9 @@ import { UserModule } from './user/user.module';
           type: 'mysql',
           //host: configService.get('HOST'),
           //port: +configService.get<number>('PORT'),
-          username: configService.get<string>('USERNAME'),
-          password: configService.get<string>('PASSWORD'),
-          database: configService.get<string>('DB'),
+          username: configService.get<string>('DB_USERNAME'),
+          password: configService.get<string>('DB_PASSWORD'),
+          database: configService.get<string>('DB_NAME'),
           entities: [AnalysisSessionEntity],
           synchronize: true,
           logging: true,
@@ -39,7 +41,9 @@ import { UserModule } from './user/user.module';
       context: ({ req, res }) => ({ req, res })
     }),
     AnalysisSessionModule,
-    UserModule
+    UserModule,
+    PartModule,
+    TagModule
   ],
   controllers: [],
   providers: [],

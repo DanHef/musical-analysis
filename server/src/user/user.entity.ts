@@ -1,9 +1,11 @@
-import { FilterableField } from "@nestjs-query/query-graphql";
+import { FilterableField, Relation } from "@nestjs-query/query-graphql";
 import { ID, ObjectType,  } from "@nestjs/graphql";
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { PartEntity } from "src/part/part.entity";
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 
 @ObjectType('User')
-@Entity()
+@Relation('parts', () => [PartEntity], {nullable: true})
+@Entity('user')
 export class UserEntity {
     @FilterableField(type => ID)
     @PrimaryColumn('uuid')
@@ -24,4 +26,7 @@ export class UserEntity {
     @FilterableField({nullable: true})
     @Column({nullable: true})
     email: string;
+
+    @OneToMany(type => PartEntity, part => part.user)
+    parts?: PartEntity[];
 }

@@ -3,25 +3,42 @@
 # ------------------------------------------------------
 
 type AnalysisSession {
+  assignees(
+    """Specify to filter the records returned."""
+    filter: UserFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [UserSort!] = []
+  ): [User!]
   id: ID!
+  moderator: User
   name: String!
+  parts(
+    """Specify to filter the records returned."""
+    filter: PartFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [PartSort!] = []
+  ): [Part!]
+  started: DateTime
+  stopped: DateTime
 }
 
 type AnalysisSessionAvgAggregate {
   id: Float
 }
 
-type AnalysisSessionConnection {
-  """Array of edges."""
-  edges: [AnalysisSessionEdge!]!
-
-  """Paging information"""
-  pageInfo: PageInfo!
-}
-
 type AnalysisSessionCountAggregate {
   id: Int
   name: Int
+  started: Int
+  stopped: Int
 }
 
 input AnalysisSessionDeleteFilter {
@@ -29,19 +46,15 @@ input AnalysisSessionDeleteFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [AnalysisSessionDeleteFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
 }
 
 type AnalysisSessionDeleteResponse {
   id: ID
   name: String
-}
-
-type AnalysisSessionEdge {
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-
-  """The node containing the AnalysisSession"""
-  node: AnalysisSession!
+  started: DateTime
+  stopped: DateTime
 }
 
 input AnalysisSessionFilter {
@@ -49,16 +62,22 @@ input AnalysisSessionFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [AnalysisSessionFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
 }
 
 type AnalysisSessionMaxAggregate {
   id: ID
   name: String
+  started: DateTime
+  stopped: DateTime
 }
 
 type AnalysisSessionMinAggregate {
   id: ID
   name: String
+  started: DateTime
+  stopped: DateTime
 }
 
 input AnalysisSessionSort {
@@ -70,6 +89,8 @@ input AnalysisSessionSort {
 enum AnalysisSessionSortFields {
   id
   name
+  started
+  stopped
 }
 
 type AnalysisSessionSumAggregate {
@@ -81,19 +102,35 @@ input AnalysisSessionUpdateFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [AnalysisSessionUpdateFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
 }
 
-"""Cursor for paging through collections"""
-scalar ConnectionCursor
+input BooleanFieldComparison {
+  is: Boolean
+  isNot: Boolean
+}
 
 input CreateAnalysisSession {
   id: ID
   name: String
+  started: DateTime
+  stopped: DateTime
 }
 
 input CreateManyAnalysisSessionsInput {
   """Array of records to create"""
   analysisSessions: [CreateAnalysisSession!]!
+}
+
+input CreateManyPartsInput {
+  """Array of records to create"""
+  parts: [CreatePart!]!
+}
+
+input CreateManyTagsInput {
+  """Array of records to create"""
+  tags: [CreateTag!]!
 }
 
 input CreateManyUsersInput {
@@ -106,9 +143,32 @@ input CreateOneAnalysisSessionInput {
   analysisSession: CreateAnalysisSession!
 }
 
+input CreateOnePartInput {
+  """The record to create"""
+  part: CreatePart!
+}
+
+input CreateOneTagInput {
+  """The record to create"""
+  tag: CreateTag!
+}
+
 input CreateOneUserInput {
   """The record to create"""
   user: CreateUser!
+}
+
+input CreatePart {
+  description: String
+  id: ID
+  started: DateTime
+  stopped: DateTime
+  submitted: Boolean
+}
+
+input CreateTag {
+  description: String
+  id: ID
 }
 
 input CreateUser {
@@ -119,28 +179,49 @@ input CreateUser {
   username: String
 }
 
-input CursorPaging {
-  """Paginate after opaque cursor"""
-  after: ConnectionCursor
-
-  """Paginate before opaque cursor"""
-  before: ConnectionCursor
-
-  """Paginate first"""
-  first: Int
-
-  """Paginate last"""
-  last: Int
+input DateFieldComparison {
+  between: DateFieldComparisonBetween
+  eq: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  is: Boolean
+  isNot: Boolean
+  lt: DateTime
+  lte: DateTime
+  neq: DateTime
+  notBetween: DateFieldComparisonBetween
+  notIn: [DateTime!]
 }
+
+input DateFieldComparisonBetween {
+  lower: DateTime!
+  upper: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input DeleteManyAnalysisSessionsInput {
   """Filter to find records to delete"""
   filter: AnalysisSessionDeleteFilter!
 }
 
+input DeleteManyPartsInput {
+  """Filter to find records to delete"""
+  filter: PartDeleteFilter!
+}
+
 type DeleteManyResponse {
   """The number of records deleted."""
   deletedCount: Int!
+}
+
+input DeleteManyTagsInput {
+  """Filter to find records to delete"""
+  filter: TagDeleteFilter!
 }
 
 input DeleteManyUsersInput {
@@ -171,33 +252,143 @@ input IDFilterComparison {
 }
 
 type Mutation {
+  addAssigneesToAnalysisSession(input: RelationsInput!): AnalysisSession!
+  addPartsToAnalysisSession(input: RelationsInput!): AnalysisSession!
+  addPartsToUser(input: RelationsInput!): User!
   createManyAnalysisSessions(input: CreateManyAnalysisSessionsInput!): [AnalysisSession!]!
+  createManyParts(input: CreateManyPartsInput!): [Part!]!
+  createManyTags(input: CreateManyTagsInput!): [Tag!]!
   createManyUsers(input: CreateManyUsersInput!): [User!]!
   createOneAnalysisSession(input: CreateOneAnalysisSessionInput!): AnalysisSession!
+  createOnePart(input: CreateOnePartInput!): Part!
+  createOneTag(input: CreateOneTagInput!): Tag!
   createOneUser(input: CreateOneUserInput!): User!
   deleteManyAnalysisSessions(input: DeleteManyAnalysisSessionsInput!): DeleteManyResponse!
+  deleteManyParts(input: DeleteManyPartsInput!): DeleteManyResponse!
+  deleteManyTags(input: DeleteManyTagsInput!): DeleteManyResponse!
   deleteManyUsers(input: DeleteManyUsersInput!): DeleteManyResponse!
   deleteOneAnalysisSession(input: DeleteOneInput!): AnalysisSessionDeleteResponse!
+  deleteOnePart(input: DeleteOneInput!): PartDeleteResponse!
+  deleteOneTag(input: DeleteOneInput!): TagDeleteResponse!
   deleteOneUser(input: DeleteOneInput!): UserDeleteResponse!
+  removeAnalysisSessionFromPart(input: RelationInput!): Part!
+  removeAssigneesFromAnalysisSession(input: RelationsInput!): AnalysisSession!
+  removeModeratorFromAnalysisSession(input: RelationInput!): AnalysisSession!
+  removePartsFromAnalysisSession(input: RelationsInput!): AnalysisSession!
+  removePartsFromUser(input: RelationsInput!): User!
+  removeUserFromPart(input: RelationInput!): Part!
+  setAnalysisSessionOnPart(input: RelationInput!): Part!
+  setModeratorOnAnalysisSession(input: RelationInput!): AnalysisSession!
+  setUserOnPart(input: RelationInput!): Part!
   syncUsers(id: ID!): [User!]!
   updateManyAnalysisSessions(input: UpdateManyAnalysisSessionsInput!): UpdateManyResponse!
+  updateManyParts(input: UpdateManyPartsInput!): UpdateManyResponse!
+  updateManyTags(input: UpdateManyTagsInput!): UpdateManyResponse!
   updateManyUsers(input: UpdateManyUsersInput!): UpdateManyResponse!
   updateOneAnalysisSession(input: UpdateOneAnalysisSessionInput!): AnalysisSession!
+  updateOnePart(input: UpdateOnePartInput!): Part!
+  updateOneTag(input: UpdateOneTagInput!): Tag!
   updateOneUser(input: UpdateOneUserInput!): User!
 }
 
-type PageInfo {
-  """The cursor of the last returned record."""
-  endCursor: ConnectionCursor
+input OffsetPaging {
+  """Limit the number of records returned"""
+  limit: Int
 
-  """true if paging forward and there are more records."""
-  hasNextPage: Boolean
+  """Offset to start returning records from"""
+  offset: Int
+}
 
-  """true if paging backwards and there are more records."""
-  hasPreviousPage: Boolean
+type Part {
+  analysisSession: AnalysisSession
+  description: String
+  id: ID!
+  started: DateTime
+  stopped: DateTime
+  submitted: Boolean!
+  user: User
+}
 
-  """The cursor of the first returned record."""
-  startCursor: ConnectionCursor
+type PartAvgAggregate {
+  id: Float
+}
+
+type PartCountAggregate {
+  description: Int
+  id: Int
+  started: Int
+  stopped: Int
+  submitted: Int
+}
+
+input PartDeleteFilter {
+  and: [PartDeleteFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [PartDeleteFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
+  submitted: BooleanFieldComparison
+}
+
+type PartDeleteResponse {
+  description: String
+  id: ID
+  started: DateTime
+  stopped: DateTime
+  submitted: Boolean
+}
+
+input PartFilter {
+  and: [PartFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [PartFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
+  submitted: BooleanFieldComparison
+}
+
+type PartMaxAggregate {
+  description: String
+  id: ID
+  started: DateTime
+  stopped: DateTime
+}
+
+type PartMinAggregate {
+  description: String
+  id: ID
+  started: DateTime
+  stopped: DateTime
+}
+
+input PartSort {
+  direction: SortDirection!
+  field: PartSortFields!
+  nulls: SortNulls
+}
+
+enum PartSortFields {
+  description
+  id
+  started
+  stopped
+  submitted
+}
+
+type PartSumAggregate {
+  id: Float
+}
+
+input PartUpdateFilter {
+  and: [PartUpdateFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [PartUpdateFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
+  submitted: BooleanFieldComparison
 }
 
 type Query {
@@ -210,11 +401,39 @@ type Query {
     filter: AnalysisSessionFilter = {}
 
     """Limit or page results."""
-    paging: CursorPaging = {first: 10}
+    paging: OffsetPaging = {limit: 10}
 
     """Specify to sort results."""
     sorting: [AnalysisSessionSort!] = []
-  ): AnalysisSessionConnection!
+  ): [AnalysisSession!]!
+  part(
+    """The id of the record to find."""
+    id: ID!
+  ): Part
+  parts(
+    """Specify to filter the records returned."""
+    filter: PartFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [PartSort!] = []
+  ): [Part!]!
+  tag(
+    """The id of the record to find."""
+    id: ID!
+  ): Tag
+  tags(
+    """Specify to filter the records returned."""
+    filter: TagFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [TagSort!] = []
+  ): [Tag!]!
   user(
     """The id of the record to find."""
     id: ID!
@@ -224,11 +443,27 @@ type Query {
     filter: UserFilter = {}
 
     """Limit or page results."""
-    paging: CursorPaging = {first: 10}
+    paging: OffsetPaging = {limit: 10}
 
     """Specify to sort results."""
     sorting: [UserSort!] = []
-  ): UserConnection!
+  ): [User!]!
+}
+
+input RelationInput {
+  """The id of the record."""
+  id: ID!
+
+  """The id of relation."""
+  relationId: ID!
+}
+
+input RelationsInput {
+  """The id of the record."""
+  id: ID!
+
+  """The ids of the relations."""
+  relationIds: [ID!]!
 }
 
 """Sort Directions"""
@@ -260,9 +495,76 @@ input StringFieldComparison {
   notLike: String
 }
 
+type Tag {
+  description: String
+  id: ID!
+}
+
+type TagAvgAggregate {
+  id: Float
+}
+
+type TagCountAggregate {
+  description: Int
+  id: Int
+}
+
+input TagDeleteFilter {
+  and: [TagDeleteFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [TagDeleteFilter!]
+}
+
+type TagDeleteResponse {
+  description: String
+  id: ID
+}
+
+input TagFilter {
+  and: [TagFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [TagFilter!]
+}
+
+type TagMaxAggregate {
+  description: String
+  id: ID
+}
+
+type TagMinAggregate {
+  description: String
+  id: ID
+}
+
+input TagSort {
+  direction: SortDirection!
+  field: TagSortFields!
+  nulls: SortNulls
+}
+
+enum TagSortFields {
+  description
+  id
+}
+
+type TagSumAggregate {
+  id: Float
+}
+
+input TagUpdateFilter {
+  and: [TagUpdateFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [TagUpdateFilter!]
+}
+
 input UpdateAnalysisSession {
   id: ID
   name: String
+  started: DateTime
+  stopped: DateTime
 }
 
 input UpdateManyAnalysisSessionsInput {
@@ -273,9 +575,25 @@ input UpdateManyAnalysisSessionsInput {
   update: UpdateAnalysisSession!
 }
 
+input UpdateManyPartsInput {
+  """Filter used to find fields to update"""
+  filter: PartUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdatePart!
+}
+
 type UpdateManyResponse {
   """The number of records updated."""
   updatedCount: Int!
+}
+
+input UpdateManyTagsInput {
+  """Filter used to find fields to update"""
+  filter: TagUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTag!
 }
 
 input UpdateManyUsersInput {
@@ -294,12 +612,41 @@ input UpdateOneAnalysisSessionInput {
   update: UpdateAnalysisSession!
 }
 
+input UpdateOnePartInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdatePart!
+}
+
+input UpdateOneTagInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTag!
+}
+
 input UpdateOneUserInput {
   """The id of the record to update"""
   id: ID!
 
   """The update to apply."""
   update: UpdateUser!
+}
+
+input UpdatePart {
+  description: String
+  id: ID
+  started: DateTime
+  stopped: DateTime
+  submitted: Boolean
+}
+
+input UpdateTag {
+  description: String
+  id: ID
 }
 
 input UpdateUser {
@@ -315,19 +662,21 @@ type User {
   firstname: String
   id: ID!
   lastname: String
+  parts(
+    """Specify to filter the records returned."""
+    filter: PartFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [PartSort!] = []
+  ): [Part!]
   username: String
 }
 
 type UserAvgAggregate {
   id: Float
-}
-
-type UserConnection {
-  """Array of edges."""
-  edges: [UserEdge!]!
-
-  """Paging information"""
-  pageInfo: PageInfo!
 }
 
 type UserCountAggregate {
@@ -354,14 +703,6 @@ type UserDeleteResponse {
   id: ID
   lastname: String
   username: String
-}
-
-type UserEdge {
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-
-  """The node containing the User"""
-  node: User!
 }
 
 input UserFilter {

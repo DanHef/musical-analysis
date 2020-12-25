@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { NestjsQueryGraphQLModule } from "@nestjs-query/query-graphql";
+import { NestjsQueryGraphQLModule, PagingStrategies } from "@nestjs-query/query-graphql";
 import { NestjsQueryTypeOrmModule } from "@nestjs-query/query-typeorm";
 import { AnalysisSessionEntity } from './analysis-session.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,7 +12,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             imports: [NestjsQueryTypeOrmModule.forFeature([AnalysisSessionEntity])],
             resolvers: [{
                 DTOClass: AnalysisSessionEntity,
-                EntityClass: AnalysisSessionEntity
+                EntityClass: AnalysisSessionEntity,
+                pagingStrategy: PagingStrategies.OFFSET,
             }],
         }),
     ],

@@ -1,12 +1,14 @@
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
 import { Args, ID, Mutation, Resolver, GraphQLExecutionContext, Context } from '@nestjs/graphql';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Resolver(() => UserEntity)
-export class UserResolver extends CRUDResolver(UserEntity) {
+export class UserResolver extends CRUDResolver(UserEntity, {
+    pagingStrategy: PagingStrategies.OFFSET,
+}) {
   constructor(@InjectQueryService(UserEntity) readonly service: QueryService<UserEntity>,
                 private readonly userService: UserService) {
     super(service);
