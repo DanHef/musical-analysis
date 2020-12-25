@@ -21,6 +21,7 @@ import { MdePopoverModule } from '@material-extended/mde';
 
 import { AnalysisMasterComponent } from './analysis-master/analysis-master.component';
 import { NavigationComponent } from './navigation/navigation.component';
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { NavigationComponent } from './navigation/navigation.component';
     MatCardModule,
     MatDialogModule,
     MatGridListModule,
-    MdePopoverModule
+    MdePopoverModule,
+    GraphQLModule
   ],
   providers: [],
   bootstrap: [AppComponent]
