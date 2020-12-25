@@ -17,6 +17,19 @@ interface AnalysisSessionResponse {
     analysisSession: any
 }
 
+interface CreateAnalysisSessionResponse {
+    createOneAnalysisSession: any
+}
+
+const queryAllAnalysisSessions = gql(`{
+    analysisSessions{
+            id
+            name
+            started 
+            stopped
+      }
+}`);
+
 @Component({
     selector: 'app-analysis-master',
     templateUrl: './analysis-master.component.html',
@@ -57,14 +70,35 @@ export class AnalysisMasterComponent implements OnInit {
         this.loadAnalysis();
     }
 
-    public createAnalysisSession() {
-        this.httpClient.post(environment.apiEndpoint + '/analysis', {
-            id: this.analysisSessionID
-        }).subscribe(async function () {
-            await this.loadAnalysis();
-            this.seletedAnalysisSessionID = this.analysisSessionID;
-            await this.loadAnalysisById(this.seletedAnalysisSessionID);
-        }.bind(this));
+    public async createAnalysisSession() {
+        const newAnalysisSession = await this.apollo.mutate({
+            mutation: gql(`mutation{
+                createOneAnalysisSession(input:{
+                    analysisSession:{
+                        name:"${this.analysisSessionID}"
+                    }
+                })
+                {id name started stopped}
+            }`),
+            refetchQueries: [
+                {
+                    query: queryAllAnalysisSessions
+                }
+            ],
+            awaitRefetchQueries: true
+        }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
+
+        this.seletedAnalysisSessionID = newAnalysisSession.id;
+        await this.loadAnalysis();
+        await this.loadAnalysisById(this.seletedAnalysisSessionID);
+        /* this.httpClient.post(environment.apiEndpoint + '/analysis', {
+             id: this.analysisSessionID
+         }).subscribe(async function () {
+             await this.loadAnalysis();
+             this.seletedAnalysisSessionID = this.analysisSessionID;
+             await this.loadAnalysisById(this.seletedAnalysisSessionID);
+         }.bind(this));*/
+
     }
 
     public async startMusic() {
@@ -156,15 +190,8 @@ export class AnalysisMasterComponent implements OnInit {
 
     private async loadAnalysis() {
         this.analysis = await this.apollo.query({
-            query: gql(`{
-                analysisSessions{
-                        id
-                        name
-                        started 
-                        stopped
-                  }
-            }`)
-        }).pipe(map(result => result.data && (result.data as AnalysisSessionsResponse).analysisSessions)).toPromise();
+            query: queryAllAnalysisSessions})
+            .pipe(map(({data}) => (data as AnalysisSessionsResponse).analysisSessions)).toPromise();
 
         return this.analysis;
     }
