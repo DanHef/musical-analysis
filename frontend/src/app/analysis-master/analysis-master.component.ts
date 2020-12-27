@@ -8,6 +8,8 @@ import { environment } from '../../environments/environment';
 import TimelinesChart, { Group } from 'timelines-chart';
 import { Apollo, gql } from 'apollo-angular';
 import { map } from "rxjs/operators";
+import { AllAnalysisSessionsGQL, OneAnalysisSessionGQL } from 'src/generated/graphql';
+
 
 interface AnalysisSessionsResponse {
     analysisSessions: Array<any>
@@ -20,19 +22,6 @@ interface AnalysisSessionResponse {
 interface CreateAnalysisSessionResponse {
     createOneAnalysisSession: any
 }
-
-const QUERY_ALL_ANALYSIS_SESSIONS = gql(`{
-    analysisSessions{
-            id
-            name
-            started 
-            stopped
-      }
-}`);
-
-const QUERY_ONE_ANALYSIS_SESSION = gql(`query oneSession($analysisSessionId: ID!){
-    analysisSession(id: $analysisSessionId){id name started stopped}
-}`);
 
 const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: ID!){
     deleteOneAnalysisSession(input: {
@@ -71,7 +60,9 @@ export class AnalysisMasterComponent implements OnInit {
     sessionDurationInSeconds;
 
     constructor(private readonly httpClient: HttpClient,
-        private readonly apollo: Apollo) { }
+                private readonly apollo: Apollo,
+                private readonly queryAllAnalysisSessionsService: AllAnalysisSessionsGQL,
+                private readonly queryOneAnalysisSessionService: OneAnalysisSessionGQL) { }
 
     public ngOnInit() {
         this.wavesurfer = WaveSurfer.create({
@@ -105,12 +96,12 @@ export class AnalysisMasterComponent implements OnInit {
             }`),
             update: (cache, { data }) => {
                 const existingAnalysisSessions: any = cache.readQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                    query: this.queryAllAnalysisSessionsService.document
                 });
                 const newAnalysisSession = data["createOneAnalysisSession"];
                 const sessions = [...existingAnalysisSessions.analysisSessions, newAnalysisSession];
                 cache.writeQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    query: this.queryAllAnalysisSessionsService.document,
                     data: { analysisSessions: sessions }
                 });
             },
@@ -203,7 +194,7 @@ export class AnalysisMasterComponent implements OnInit {
             },
             update: (cache, { data }) => {
                 const existingAnalysisSessions: any = cache.readQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                    query: this.queryAllAnalysisSessionsService.document
                 });
 
                 const sessions = existingAnalysisSessions.analysisSessions.filter((session) => {
@@ -211,7 +202,7 @@ export class AnalysisMasterComponent implements OnInit {
                 });
 
                 cache.writeQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    query: this.queryAllAnalysisSessionsService.document,
                     data: { analysisSessions: sessions }
                 });
             },
@@ -281,22 +272,18 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     private async loadAnalysis() {
-        this.analysis = await this.apollo.query({
-            query: QUERY_ALL_ANALYSIS_SESSIONS
-        })
-            .pipe(map(({ data }) => (data as AnalysisSessionsResponse).analysisSessions)).toPromise();
+        this.analysis = await (await this.queryAllAnalysisSessionsService.fetch().toPromise()).data.analysisSessions;
 
         return this.analysis;
     }
 
     private async loadAnalysisById(analysisId) {
-        const loadedAnalysisSession = await this.apollo.query({
-            query: QUERY_ONE_ANALYSIS_SESSION,
-            variables: {
-                analysisSessionId: analysisId
-            }
-        }).pipe(map(result => result.data && (result.data as AnalysisSessionResponse).analysisSession)).toPromise();
+        const loadedAnalysisSessionResponse = await this.queryOneAnalysisSessionService.fetch({
+            analysisSessionId: analysisId
+        }).toPromise();
 
+        const loadedAnalysisSession = loadedAnalysisSessionResponse.data.analysisSession;
+        
         this.setSelectedAnalysisSession(loadedAnalysisSession);
         return loadedAnalysisSession;
     }

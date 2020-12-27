@@ -1,0 +1,8 @@
+query allAnalysisSessions {
+    analysisSessions{
+            id
+            name
+            started 
+            stopped
+      }
+}
