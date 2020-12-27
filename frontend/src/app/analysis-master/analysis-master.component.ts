@@ -40,6 +40,20 @@ const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: 
     }){id}
 }`);
 
+const MUTATION_UPDATE_ONE_ANALYSIS_SESSION_START = gql(`mutation ($analysisSessionId: ID!, $timeStamp: DateTime) {
+    updateOneAnalysisSession(input: {
+        id: $analysisSessionId,
+        update: {started: $timeStamp}
+    }){started}
+}`);
+
+const MUTATION_UPDATE_ONE_ANALYSIS_SESSION_STOP = gql(`mutation ($analysisSessionId: ID!, $timeStamp: DateTime) {
+    updateOneAnalysisSession(input: {
+        id: $analysisSessionId,
+        update: {stopped: $timeStamp}
+    }){stopped}
+}`);
+
 @Component({
     selector: 'app-analysis-master',
     templateUrl: './analysis-master.component.html',
@@ -107,9 +121,35 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     public async startMusic() {
-        await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
-            started: new Date().toISOString()
-        }).toPromise();
+        //await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
+        //    started: new Date().toISOString()
+        //}).toPromise()
+        const startMusic = await this.apollo.mutate({
+            mutation: MUTATION_UPDATE_ONE_ANALYSIS_SESSION_START,
+            variables: {
+                analysisSessionId: this.selectedAnalysisSession.id,
+                timeStamp: new Date().toISOString()
+            },
+            update: (cache, { data }) => {
+                const existingAnalysisSessions: any = cache.readQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                });
+
+                const sessions = existingAnalysisSessions.analysisSessions.map(session => {
+                    if(session.id === this.selectedAnalysisSession.id) {
+                        return {...session, started: data["updateOneAnalysisSession"].started}
+                    } else {
+                        return session;
+                    }
+                })
+
+                cache.writeQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    data: { analysisSessions: sessions }
+                });
+            },
+        }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
+
 
         this.loadAnalysis();
         this.loadAnalysisById(this.selectedAnalysisSession.id);
@@ -118,9 +158,36 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     public async stopMusic() {
-        await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
-            stopped: new Date().toISOString()
-        }).toPromise();
+        //await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
+        //    stopped: new Date().toISOString()
+        //}).toPromise();
+        const stopMusic = await this.apollo.mutate({
+            mutation: MUTATION_UPDATE_ONE_ANALYSIS_SESSION_STOP,
+            variables: {
+                analysisSessionId: this.selectedAnalysisSession.id,
+                timeStamp: new Date().toISOString()
+            },
+            update: (cache, { data }) => {
+                const existingAnalysisSessions: any = cache.readQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                });
+
+                const sessions = existingAnalysisSessions.analysisSessions.map(session => {
+                    if(session.id === this.selectedAnalysisSession.id) {
+                        return {...session, stopped: data["updateOneAnalysisSession"].stopped}
+                    } else {
+                        return session;
+                    }
+                })
+
+                cache.writeQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    data: { analysisSessions: sessions }
+                });
+            },
+        }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
+
+
 
         this.loadAnalysis();
         this.loadAnalysisById(this.selectedAnalysisSession.id);
