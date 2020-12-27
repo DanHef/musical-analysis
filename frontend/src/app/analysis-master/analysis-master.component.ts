@@ -9,7 +9,7 @@ import TimelinesChart, { Group } from 'timelines-chart';
 import { Apollo, gql } from 'apollo-angular';
 import { map } from "rxjs/operators";
 import { AllAnalysisSessionsGQL, OneAnalysisSessionGQL } from 'src/generated/graphql';
-
+import { useMutation } from '@apollo/client';
 
 interface AnalysisSessionsResponse {
     analysisSessions: Array<any>
@@ -22,6 +22,7 @@ interface AnalysisSessionResponse {
 interface CreateAnalysisSessionResponse {
     createOneAnalysisSession: any
 }
+
 
 const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: ID!){
     deleteOneAnalysisSession(input: {
@@ -41,6 +42,13 @@ const MUTATION_UPDATE_ONE_ANALYSIS_SESSION_STOP = gql(`mutation ($analysisSessio
         id: $analysisSessionId,
         update: {stopped: $timeStamp}
     }){stopped}
+}`);
+
+const MUTATION_UPLOAD = gql(`mutation ($analysisSessionId: ID!, $file: Upload!) {
+    uploadFile(input: {
+        id: $analysisSessionId,
+        file: $timeStamp
+    }){success}
 }`);
 
 @Component({
@@ -215,6 +223,19 @@ export class AnalysisMasterComponent implements OnInit {
         this.loadAnalysisById(event.source.value);
     }
 
+    public UploadFile() {
+        const [mutate] = useMutation(MUTATION_UPLOAD);
+      
+        function onChange({
+          target: {
+            validity,
+            files: [file],
+          },
+        }) {
+          if (validity.valid) mutate({ variables: { file } });
+        }
+    }
+    
     public async onStatisticsRefresh() {
         this.statisticsData = await this.loadAnalysisStatistics();
         this.loadAnalysisById(this.selectedAnalysisSession.id);
