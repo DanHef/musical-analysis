@@ -17,8 +17,8 @@
                 <div style="width: 50%; float: left;">
                     <mat-form-field style="margin: 0px 0 0 0px;">
                         <mat-label>Analysis Session ID</mat-label>
-                        <mat-select [(value)]="seletedAnalysisSessionID" (selectionChange)="onSessionSelected()">
-                            <mat-option *ngFor="let analysisItem of analysis" [value]="analysisItem.id">
+                        <mat-select value="{{selectedAnalysisSession ? selectedAnalysisSession.id : ''}}" > <!--(selectionChange)="onSessionSelected($event)"-->
+                            <mat-option *ngFor="let analysisItem of analysis" (onSelectionChange)="onSessionSelected($event)" [value]="analysisItem.id">
                                 {{analysisItem.name}}
                             </mat-option>
                         </mat-select>
@@ -84,11 +84,11 @@
                 <button mat-raised-button (click)="onAudioPause()" class="audio-button">Pause</button>
                 <button mat-raised-button (click)="onAudioStop()" class="audio-button">Stop</button>
                 <button mat-raised-button class="audio-button" (click)="startMusic()"
-                    disabled="{{ selectedAnalysis && selectedAnalysis.started !== null }}">Start Analyse
+                    disabled="{{ selectedAnalysisSession && selectedAnalysisSession.started !== null }}">Start Analyse
                     Session</button>
 
                 <button mat-raised-button class="audio-button" (click)="stopMusic()"
-                    disabled="{{ ( selectedAnalysis && selectedAnalysis.started === null ) || ( selectedAnalysis && selectedAnalysis.stopped !== null ) }}">Stop
+                    disabled="{{ ( selectedAnalysisSession && selectedAnalysisSession.started === null ) || ( selectedAnalysisSession && selectedAnalysisSession.stopped !== null ) }}">Stop
                     Analyse Session</button>
             </div>
 

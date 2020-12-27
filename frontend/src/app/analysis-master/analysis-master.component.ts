@@ -21,13 +21,17 @@ interface CreateAnalysisSessionResponse {
     createOneAnalysisSession: any
 }
 
-const queryAllAnalysisSessions = gql(`{
+const QUERY_ALL_ANALYSIS_SESSIONS = gql(`{
     analysisSessions{
             id
             name
             started 
             stopped
       }
+}`);
+
+const QUERY_ONE_ANALYSIS_SESSION = gql(`query oneSession($analysisSessionId: ID!){
+    analysisSession(id: $analysisSessionId){id name started stopped}
 }`);
 
 @Component({
@@ -37,8 +41,7 @@ const queryAllAnalysisSessions = gql(`{
 })
 export class AnalysisMasterComponent implements OnInit {
     analysisSessionID = '';
-    seletedAnalysisSessionID = '';
-    selectedAnalysis;
+    selectedAnalysisSession;
     wavesurfer;
     analysis;
     statistics;
@@ -80,45 +83,41 @@ export class AnalysisMasterComponent implements OnInit {
                 })
                 {id name started stopped}
             }`),
-            refetchQueries: [
-                {
-                    query: queryAllAnalysisSessions
-                }
-            ],
-            awaitRefetchQueries: true
+            update: (cache, { data }) => {
+                const existingAnalysisSessions: any = cache.readQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                });
+                const newAnalysisSession = data["createOneAnalysisSession"];
+                const sessions = [...existingAnalysisSessions.analysisSessions, newAnalysisSession];
+                cache.writeQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    data: { analysisSessions: sessions }
+                });
+            },
         }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
 
-        this.seletedAnalysisSessionID = newAnalysisSession.id;
         await this.loadAnalysis();
-        await this.loadAnalysisById(this.seletedAnalysisSessionID);
-        /* this.httpClient.post(environment.apiEndpoint + '/analysis', {
-             id: this.analysisSessionID
-         }).subscribe(async function () {
-             await this.loadAnalysis();
-             this.seletedAnalysisSessionID = this.analysisSessionID;
-             await this.loadAnalysisById(this.seletedAnalysisSessionID);
-         }.bind(this));*/
-
+        this.setSelectedAnalysisSession(newAnalysisSession);
     }
 
     public async startMusic() {
-        await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID, {
+        await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
             started: new Date().toISOString()
         }).toPromise();
 
         this.loadAnalysis();
-        this.loadAnalysisById(this.seletedAnalysisSessionID);
+        this.loadAnalysisById(this.selectedAnalysisSession.id);
 
         this.wavesurfer.play();
     }
 
     public async stopMusic() {
-        await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID, {
+        await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
             stopped: new Date().toISOString()
         }).toPromise();
 
         this.loadAnalysis();
-        this.loadAnalysisById(this.seletedAnalysisSessionID);
+        this.loadAnalysisById(this.selectedAnalysisSession.id);
 
         this.wavesurfer.stop();
     }
@@ -128,13 +127,13 @@ export class AnalysisMasterComponent implements OnInit {
         await this.loadAnalysis();
     }
 
-    public onSessionSelected() {
-        this.loadAnalysisById(this.seletedAnalysisSessionID);
+    public onSessionSelected(event) {
+        this.loadAnalysisById(event.source.value);
     }
 
     public async onStatisticsRefresh() {
         this.statisticsData = await this.loadAnalysisStatistics();
-        this.loadAnalysisById(this.seletedAnalysisSessionID);
+        this.loadAnalysisById(this.selectedAnalysisSession.id);
 
         // tslint:disable-next-line:forin
         for (const user in this.statisticsData) {
@@ -190,25 +189,32 @@ export class AnalysisMasterComponent implements OnInit {
 
     private async loadAnalysis() {
         this.analysis = await this.apollo.query({
-            query: queryAllAnalysisSessions})
-            .pipe(map(({data}) => (data as AnalysisSessionsResponse).analysisSessions)).toPromise();
+            query: QUERY_ALL_ANALYSIS_SESSIONS
+        })
+            .pipe(map(({ data }) => (data as AnalysisSessionsResponse).analysisSessions)).toPromise();
 
         return this.analysis;
     }
 
     private async loadAnalysisById(analysisId) {
-        this.selectedAnalysis = await this.apollo.query({
-            query: gql(`{
-                analysisSession(id: ${analysisId}){id name started stopped}
-            }`)
+        const loadedAnalysisSession = await this.apollo.query({
+            query: QUERY_ONE_ANALYSIS_SESSION,
+            variables: {
+                analysisSessionId: analysisId
+            }
         }).pipe(map(result => result.data && (result.data as AnalysisSessionResponse).analysisSession)).toPromise();
 
-        return this.selectedAnalysis;
+        this.setSelectedAnalysisSession(loadedAnalysisSession);
+        return loadedAnalysisSession;
+    }
+
+    private setSelectedAnalysisSession(analysisSession) {
+        this.selectedAnalysisSession = analysisSession;
     }
 
     private async loadAnalysisStatistics() {
         // tslint:disable-next-line:max-line-length
-        this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.seletedAnalysisSessionID + '/statistics').toPromise();
+        this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id + '/statistics').toPromise();
 
         return this.statistics;
     }
