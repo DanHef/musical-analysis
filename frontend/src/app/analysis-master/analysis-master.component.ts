@@ -34,6 +34,12 @@ const QUERY_ONE_ANALYSIS_SESSION = gql(`query oneSession($analysisSessionId: ID!
     analysisSession(id: $analysisSessionId){id name started stopped}
 }`);
 
+const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: ID!){
+    deleteOneAnalysisSession(input: {
+        id: $analysisSessionId
+    }){id}
+}`);
+
 @Component({
     selector: 'app-analysis-master',
     templateUrl: './analysis-master.component.html',
@@ -123,7 +129,27 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     public async onDelete(analysis) {
-        await this.httpClient.delete(environment.apiEndpoint + '/analysis/' + analysis.id).toPromise();
+        await this.apollo.mutate({
+            mutation: MUTATION_DELETE_ONE_ANALYSIS_SESSION,
+            variables: {
+                analysisSessionId: analysis.id
+            },
+            update: (cache, { data }) => {
+                const existingAnalysisSessions: any = cache.readQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                });
+
+                const sessions = existingAnalysisSessions.analysisSessions.filter((session) => {
+                    return session.id !== analysis.id;
+                });
+
+                cache.writeQuery({
+                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    data: { analysisSessions: sessions }
+                });
+            },
+        }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
+        //await this.httpClient.delete(environment.apiEndpoint + '/analysis/' + analysis.id).toPromise();
         await this.loadAnalysis();
     }
 
