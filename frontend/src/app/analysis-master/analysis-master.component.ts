@@ -131,7 +131,7 @@ export class AnalysisMasterComponent implements OnInit {
             },
             update: (cache, { data }) => {
                 const existingAnalysisSessions: any = cache.readQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                    query: this.queryAllAnalysisSessionsService.document
                 });
 
                 const sessions = existingAnalysisSessions.analysisSessions.map(session => {
@@ -143,7 +143,7 @@ export class AnalysisMasterComponent implements OnInit {
                 })
 
                 cache.writeQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    query: this.queryAllAnalysisSessionsService.document,
                     data: { analysisSessions: sessions }
                 });
             },
@@ -168,7 +168,7 @@ export class AnalysisMasterComponent implements OnInit {
             },
             update: (cache, { data }) => {
                 const existingAnalysisSessions: any = cache.readQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS
+                    query: this.queryAllAnalysisSessionsService.document
                 });
 
                 const sessions = existingAnalysisSessions.analysisSessions.map(session => {
@@ -180,7 +180,7 @@ export class AnalysisMasterComponent implements OnInit {
                 })
 
                 cache.writeQuery({
-                    query: QUERY_ALL_ANALYSIS_SESSIONS,
+                    query: this.queryAllAnalysisSessionsService.document,
                     data: { analysisSessions: sessions }
                 });
             },
