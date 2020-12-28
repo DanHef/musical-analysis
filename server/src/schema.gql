@@ -15,7 +15,6 @@ type AnalysisSession {
   ): [User!]
   id: ID!
   moderator: User
-  musicFile: DateTime
   name: String!
   parts(
     """Specify to filter the records returned."""
@@ -37,7 +36,6 @@ type AnalysisSessionAvgAggregate {
 
 type AnalysisSessionCountAggregate {
   id: Int
-  musicFile: Int
   name: Int
   started: Int
   stopped: Int
@@ -46,7 +44,6 @@ type AnalysisSessionCountAggregate {
 input AnalysisSessionDeleteFilter {
   and: [AnalysisSessionDeleteFilter!]
   id: IDFilterComparison
-  musicFile: DateFieldComparison
   name: StringFieldComparison
   or: [AnalysisSessionDeleteFilter!]
   started: DateFieldComparison
@@ -55,7 +52,6 @@ input AnalysisSessionDeleteFilter {
 
 type AnalysisSessionDeleteResponse {
   id: ID
-  musicFile: DateTime
   name: String
   started: DateTime
   stopped: DateTime
@@ -64,7 +60,6 @@ type AnalysisSessionDeleteResponse {
 input AnalysisSessionFilter {
   and: [AnalysisSessionFilter!]
   id: IDFilterComparison
-  musicFile: DateFieldComparison
   name: StringFieldComparison
   or: [AnalysisSessionFilter!]
   started: DateFieldComparison
@@ -73,7 +68,6 @@ input AnalysisSessionFilter {
 
 type AnalysisSessionMaxAggregate {
   id: ID
-  musicFile: DateTime
   name: String
   started: DateTime
   stopped: DateTime
@@ -81,7 +75,6 @@ type AnalysisSessionMaxAggregate {
 
 type AnalysisSessionMinAggregate {
   id: ID
-  musicFile: DateTime
   name: String
   started: DateTime
   stopped: DateTime
@@ -95,7 +88,6 @@ input AnalysisSessionSort {
 
 enum AnalysisSessionSortFields {
   id
-  musicFile
   name
   started
   stopped
@@ -108,7 +100,6 @@ type AnalysisSessionSumAggregate {
 input AnalysisSessionUpdateFilter {
   and: [AnalysisSessionUpdateFilter!]
   id: IDFilterComparison
-  musicFile: DateFieldComparison
   name: StringFieldComparison
   or: [AnalysisSessionUpdateFilter!]
   started: DateFieldComparison
@@ -122,7 +113,6 @@ input BooleanFieldComparison {
 
 input CreateAnalysisSession {
   id: ID
-  musicFile: DateTime
   name: String
   started: DateTime
   stopped: DateTime
@@ -572,7 +562,6 @@ input TagUpdateFilter {
 
 input UpdateAnalysisSession {
   id: ID
-  musicFile: DateTime
   name: String
   started: DateTime
   stopped: DateTime

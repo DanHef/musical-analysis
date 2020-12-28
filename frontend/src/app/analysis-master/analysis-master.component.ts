@@ -6,10 +6,10 @@ import RegionPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.js';
 import { environment } from '../../environments/environment';
 import TimelinesChart, { Group } from 'timelines-chart';
-import { Apollo, gql } from 'apollo-angular';
+import { Apollo, gql, Mutation } from 'apollo-angular';
 import { map } from "rxjs/operators";
 import { AllAnalysisSessionsGQL, OneAnalysisSessionGQL } from 'src/generated/graphql';
-import { useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 interface AnalysisSessionsResponse {
     analysisSessions: Array<any>
@@ -48,7 +48,7 @@ const MUTATION_UPLOAD = gql(`mutation ($analysisSessionId: ID!, $file: Upload!) 
     uploadFile(input: {
         id: $analysisSessionId,
         file: $timeStamp
-    }){success}
+    }){id}
 }`);
 
 @Component({
@@ -223,17 +223,28 @@ export class AnalysisMasterComponent implements OnInit {
         this.loadAnalysisById(event.source.value);
     }
 
-    public UploadFile() {
-        const [mutate] = useMutation(MUTATION_UPLOAD);
-      
-        function onChange({
-          target: {
-            validity,
-            files: [file],
-          },
-        }) {
-          if (validity.valid) mutate({ variables: { file } });
-        }
+    public async uploadFile($event) {
+        let currentId = this.selectedAnalysisSession.id;
+        this.apollo.mutate(
+            {
+                mutation: MUTATION_UPLOAD,
+                variables: {
+                  analysisSessionID: currentId,
+                  file: $event.target.files[0]
+                },
+            
+                context: {
+                  useMultipart: true
+                }
+            }).toPromise();
+//        var _map = { 
+//                file: ["variables.file"]
+//        }
+//        var file = $event.target.files[0];
+//        var fd = new FormData();
+//        fd.append('operations', JSON.stringify(operations));
+//        fd.append('map', JSON.stringify(_map));
+//        fd.append('file', file, file.name);
     }
     
     public async onStatisticsRefresh() {

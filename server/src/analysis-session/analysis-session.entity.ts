@@ -37,10 +37,6 @@ export class AnalysisSessionEntity {
     @Column({nullable: true})
     stopped: Date;
 
-    @FilterableField({nullable: true})
-    @Column({nullable: true})
-    musicFile: Date;
-
     @OneToMany(type => PartEntity, (part) => part.analysisSession)
     parts;
 }

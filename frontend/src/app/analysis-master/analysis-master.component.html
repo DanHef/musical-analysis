@@ -13,9 +13,7 @@
                     <button mat-button class="mat-raised-button mat-primary" (click)="createAnalysisSession()"
                         disabled="{{ analysisSessionID === '' }}">Create
                         Analysis Session</button>
-                    <button mat-button class="mat-raised-button mat-primary" (click)="uploadFile()"
-                        disabled="{{ analysisSessionID === '' }}">Upload
-                        File</button>
+                    <input #fileInput type="file" (change)="uploadFile($event)">
                 </div>
                 <div style="width: 50%; float: left;">
                     <mat-form-field style="margin: 0px 0 0 0px;">
