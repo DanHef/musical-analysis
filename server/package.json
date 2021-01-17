@@ -40,6 +40,7 @@
     "graphql-relay": "^0.6.0",
     "graphql-subscriptions": "^1.1.0",
     "graphql-upload": "^8.1.0",
+    "jsx": "^0.9.89",
     "mysql2": "^2.2.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

@@ -8,12 +8,10 @@
                         <input matInput placeholder="Neue Session ID" [value]="analysisSessionID"
                             (input)="analysisSessionID = $event.target.value">
                     </mat-form-field>
-
                     <br>
                     <button mat-button class="mat-raised-button mat-primary" (click)="createAnalysisSession()"
                         disabled="{{ analysisSessionID === '' }}">Create
                         Analysis Session</button>
-                    <input #fileInput type="file" (change)="uploadFile($event)">
                 </div>
                 <div style="width: 50%; float: left;">
                     <mat-form-field style="margin: 0px 0 0 0px;">
@@ -24,6 +22,65 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
+                </div>
+                <div style="width: 25%; float: left;">
+                    <mat-form-field>
+                        <mat-label>Tags</mat-label>
+                        <mat-select value="{{selectedTag ? selectedTag.id : ''}}" >
+                            <mat-option *ngFor="let tagItem of tags" (onSelectionChange)="onTagSelected($event)" [value]="tagItem.id">
+                                {{tagItem.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div style="width: 25%; float: left;">
+                    <button matInput class="mat-raised-button mat-primary" (click)="addTagToAnalysisSession()"
+                    ><!--disabled="{{ selectedTag.id === '' }}"-->
+                        Tag hinzufügen
+                    </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>Tags</mat-card-title>
+            <mat-card-content>
+                <div style="width: 50%; float: left;">
+                    <mat-table [dataSource]="sessionTags" class="mat-elevation-z8">
+                        <!-- ID Column -->
+                        <ng-container matColumnDef="id">
+                            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+                            <mat-cell *matCellDef="let tag"> {{ tag.id }} </mat-cell>
+                        </ng-container>
+
+                         <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+                            <mat-cell *matCellDef="let tag"> {{ tag.name }} </mat-cell>
+                        </ng-container>
+
+                        <!-- Delete Column -->
+                        <ng-container matColumnDef="delete">
+                            <mat-header-cell *matHeaderCellDef>Löschen</mat-header-cell>
+                            <mat-cell *matCellDef="let tag">
+                                <button mat-button class="mat-flat-button" (click)="onTagDelete(tag)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedTagsColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedTagsColumns;"></mat-row>
+                    </mat-table>
+                </div>
+                <div>
+                    <mat-form-field>
+                        <input matInput placeholder="Neuer Tag" [value]="newTagName"
+                            (input)="newTagName = $event.target.value">
+                    </mat-form-field>
+                    <br>
+                    <button mat-button class="mat-raised-button mat-primary" (click)="createTag()"
+                        disabled="{{ newTagName === '' }}">Create
+                        Tag
+                    </button>
                 </div>
             </mat-card-content>
         </mat-card>

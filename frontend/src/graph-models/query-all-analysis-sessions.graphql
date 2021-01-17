@@ -2,6 +2,10 @@ query allAnalysisSessions {
     analysisSessions{
             id
             name
+            tags {
+                  id
+                  name
+            }
             started 
             stopped
       }

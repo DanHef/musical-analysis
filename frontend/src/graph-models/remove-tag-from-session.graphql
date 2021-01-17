@@ -1,0 +1,14 @@
+mutation removeTagFromSession($sessionId: ID!, $tagId: ID!) {
+  removeTagsFromAnalysisSession(
+    input: {
+      id: "$sessionId"
+      relationIds: "$tagId"
+    })
+  {
+    id
+    tags {
+      id 
+      name
+    }
+  }
+}

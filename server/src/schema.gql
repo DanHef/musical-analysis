@@ -28,6 +28,16 @@ type AnalysisSession {
   ): [Part!]
   started: DateTime
   stopped: DateTime
+  tags(
+    """Specify to filter the records returned."""
+    filter: TagFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [TagSort!] = []
+  ): [Tag!]
 }
 
 type AnalysisSessionAvgAggregate {
@@ -167,8 +177,8 @@ input CreatePart {
 }
 
 input CreateTag {
-  description: String
   id: ID
+  name: String
 }
 
 input CreateUser {
@@ -255,6 +265,7 @@ type Mutation {
   addAssigneesToAnalysisSession(input: RelationsInput!): AnalysisSession!
   addPartsToAnalysisSession(input: RelationsInput!): AnalysisSession!
   addPartsToUser(input: RelationsInput!): User!
+  addTagsToAnalysisSession(input: RelationsInput!): AnalysisSession!
   createManyAnalysisSessions(input: CreateManyAnalysisSessionsInput!): [AnalysisSession!]!
   createManyParts(input: CreateManyPartsInput!): [Part!]!
   createManyTags(input: CreateManyTagsInput!): [Tag!]!
@@ -276,6 +287,7 @@ type Mutation {
   removeModeratorFromAnalysisSession(input: RelationInput!): AnalysisSession!
   removePartsFromAnalysisSession(input: RelationsInput!): AnalysisSession!
   removePartsFromUser(input: RelationsInput!): User!
+  removeTagsFromAnalysisSession(input: RelationsInput!): AnalysisSession!
   removeUserFromPart(input: RelationInput!): Part!
   setAnalysisSessionOnPart(input: RelationInput!): Part!
   setModeratorOnAnalysisSession(input: RelationInput!): AnalysisSession!
@@ -496,8 +508,8 @@ input StringFieldComparison {
 }
 
 type Tag {
-  description: String
   id: ID!
+  name: String
 }
 
 type TagAvgAggregate {
@@ -505,37 +517,37 @@ type TagAvgAggregate {
 }
 
 type TagCountAggregate {
-  description: Int
   id: Int
+  name: Int
 }
 
 input TagDeleteFilter {
   and: [TagDeleteFilter!]
-  description: StringFieldComparison
   id: IDFilterComparison
+  name: StringFieldComparison
   or: [TagDeleteFilter!]
 }
 
 type TagDeleteResponse {
-  description: String
   id: ID
+  name: String
 }
 
 input TagFilter {
   and: [TagFilter!]
-  description: StringFieldComparison
   id: IDFilterComparison
+  name: StringFieldComparison
   or: [TagFilter!]
 }
 
 type TagMaxAggregate {
-  description: String
   id: ID
+  name: String
 }
 
 type TagMinAggregate {
-  description: String
   id: ID
+  name: String
 }
 
 input TagSort {
@@ -545,8 +557,8 @@ input TagSort {
 }
 
 enum TagSortFields {
-  description
   id
+  name
 }
 
 type TagSumAggregate {
@@ -555,8 +567,8 @@ type TagSumAggregate {
 
 input TagUpdateFilter {
   and: [TagUpdateFilter!]
-  description: StringFieldComparison
   id: IDFilterComparison
+  name: StringFieldComparison
   or: [TagUpdateFilter!]
 }
 
@@ -645,8 +657,8 @@ input UpdatePart {
 }
 
 input UpdateTag {
-  description: String
   id: ID
+  name: String
 }
 
 input UpdateUser {

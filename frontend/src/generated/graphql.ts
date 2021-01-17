@@ -27,6 +27,7 @@ export type AnalysisSession = {
   parts?: Maybe<Array<Part>>;
   started?: Maybe<Scalars['DateTime']>;
   stopped?: Maybe<Scalars['DateTime']>;
+  tags?: Maybe<Array<Tag>>;
 };
 
 
@@ -41,6 +42,13 @@ export type AnalysisSessionPartsArgs = {
   filter?: Maybe<PartFilter>;
   paging?: Maybe<OffsetPaging>;
   sorting?: Maybe<Array<PartSort>>;
+};
+
+
+export type AnalysisSessionTagsArgs = {
+  filter?: Maybe<TagFilter>;
+  paging?: Maybe<OffsetPaging>;
+  sorting?: Maybe<Array<TagSort>>;
 };
 
 export type AnalysisSessionAvgAggregate = {
@@ -186,8 +194,8 @@ export type CreatePart = {
 };
 
 export type CreateTag = {
-  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type CreateUser = {
@@ -272,6 +280,7 @@ export type Mutation = {
   addAssigneesToAnalysisSession: AnalysisSession;
   addPartsToAnalysisSession: AnalysisSession;
   addPartsToUser: User;
+  addTagsToAnalysisSession: AnalysisSession;
   createManyAnalysisSessions: Array<AnalysisSession>;
   createManyParts: Array<Part>;
   createManyTags: Array<Tag>;
@@ -293,6 +302,7 @@ export type Mutation = {
   removeModeratorFromAnalysisSession: AnalysisSession;
   removePartsFromAnalysisSession: AnalysisSession;
   removePartsFromUser: User;
+  removeTagsFromAnalysisSession: AnalysisSession;
   removeUserFromPart: Part;
   setAnalysisSessionOnPart: Part;
   setModeratorOnAnalysisSession: AnalysisSession;
@@ -320,6 +330,11 @@ export type MutationAddPartsToAnalysisSessionArgs = {
 
 
 export type MutationAddPartsToUserArgs = {
+  input: RelationsInput;
+};
+
+
+export type MutationAddTagsToAnalysisSessionArgs = {
   input: RelationsInput;
 };
 
@@ -425,6 +440,11 @@ export type MutationRemovePartsFromAnalysisSessionArgs = {
 
 
 export type MutationRemovePartsFromUserArgs = {
+  input: RelationsInput;
+};
+
+
+export type MutationRemoveTagsFromAnalysisSessionArgs = {
   input: RelationsInput;
 };
 
@@ -704,8 +724,8 @@ export type StringFieldComparison = {
 
 export type Tag = {
   __typename?: 'Tag';
-  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
 };
 
 export type TagAvgAggregate = {
@@ -715,40 +735,40 @@ export type TagAvgAggregate = {
 
 export type TagCountAggregate = {
   __typename?: 'TagCountAggregate';
-  description?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['Int']>;
 };
 
 export type TagDeleteFilter = {
   and?: Maybe<Array<TagDeleteFilter>>;
-  description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
+  name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagDeleteFilter>>;
 };
 
 export type TagDeleteResponse = {
   __typename?: 'TagDeleteResponse';
-  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type TagFilter = {
   and?: Maybe<Array<TagFilter>>;
-  description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
+  name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagFilter>>;
 };
 
 export type TagMaxAggregate = {
   __typename?: 'TagMaxAggregate';
-  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type TagMinAggregate = {
   __typename?: 'TagMinAggregate';
-  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type TagSort = {
@@ -758,8 +778,8 @@ export type TagSort = {
 };
 
 export enum TagSortFields {
-  Description = 'description',
-  Id = 'id'
+  Id = 'id',
+  Name = 'name'
 }
 
 export type TagSumAggregate = {
@@ -769,8 +789,8 @@ export type TagSumAggregate = {
 
 export type TagUpdateFilter = {
   and?: Maybe<Array<TagUpdateFilter>>;
-  description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
+  name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagUpdateFilter>>;
 };
 
@@ -852,8 +872,8 @@ export type UpdatePart = {
 };
 
 export type UpdateTag = {
-  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUser = {
@@ -971,6 +991,36 @@ export type UserUpdateFilter = {
   username?: Maybe<StringFieldComparison>;
 };
 
+export type AddTagMutationVariables = Exact<{
+  nameOfTag: Scalars['String'];
+}>;
+
+
+export type AddTagMutation = (
+  { __typename?: 'Mutation' }
+  & { createOneTag: (
+    { __typename?: 'Tag' }
+    & Pick<Tag, 'id' | 'name'>
+  ) }
+);
+
+export type AnalysisSessionTagsQueryVariables = Exact<{
+  analysisSessionId: Scalars['ID'];
+}>;
+
+
+export type AnalysisSessionTagsQuery = (
+  { __typename?: 'Query' }
+  & { analysisSession?: Maybe<(
+    { __typename?: 'AnalysisSession' }
+    & Pick<AnalysisSession, 'id' | 'name' | 'started' | 'stopped'>
+    & { tags?: Maybe<Array<(
+      { __typename?: 'Tag' }
+      & Pick<Tag, 'id' | 'name'>
+    )>> }
+  )> }
+);
+
 export type AllAnalysisSessionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -979,6 +1029,21 @@ export type AllAnalysisSessionsQuery = (
   & { analysisSessions: Array<(
     { __typename?: 'AnalysisSession' }
     & Pick<AnalysisSession, 'id' | 'name' | 'started' | 'stopped'>
+    & { tags?: Maybe<Array<(
+      { __typename?: 'Tag' }
+      & Pick<Tag, 'id' | 'name'>
+    )>> }
+  )> }
+);
+
+export type AllTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllTagsQuery = (
+  { __typename?: 'Query' }
+  & { tags: Array<(
+    { __typename?: 'Tag' }
+    & Pick<Tag, 'id' | 'name'>
   )> }
 );
 
@@ -992,14 +1057,97 @@ export type OneAnalysisSessionQuery = (
   & { analysisSession?: Maybe<(
     { __typename?: 'AnalysisSession' }
     & Pick<AnalysisSession, 'id' | 'name' | 'started' | 'stopped'>
+    & { tags?: Maybe<Array<(
+      { __typename?: 'Tag' }
+      & Pick<Tag, 'id' | 'name'>
+    )>> }
   )> }
 );
 
+export type QueryOneTagQueryVariables = Exact<{
+  tagId: Scalars['ID'];
+}>;
+
+
+export type QueryOneTagQuery = (
+  { __typename?: 'Query' }
+  & { tag?: Maybe<(
+    { __typename?: 'Tag' }
+    & Pick<Tag, 'id' | 'name'>
+  )> }
+);
+
+export type RemoveTagFromSessionMutationVariables = Exact<{
+  sessionId: Scalars['ID'];
+  tagId: Scalars['ID'];
+}>;
+
+
+export type RemoveTagFromSessionMutation = (
+  { __typename?: 'Mutation' }
+  & { removeTagsFromAnalysisSession: (
+    { __typename?: 'AnalysisSession' }
+    & Pick<AnalysisSession, 'id'>
+    & { tags?: Maybe<Array<(
+      { __typename?: 'Tag' }
+      & Pick<Tag, 'id' | 'name'>
+    )>> }
+  ) }
+);
+
+export const AddTagDocument = gql`
+    mutation addTag($nameOfTag: String!) {
+  createOneTag(input: {tag: {name: $nameOfTag}}) {
+    id
+    name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AddTagGQL extends Apollo.Mutation<AddTagMutation, AddTagMutationVariables> {
+    document = AddTagDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const AnalysisSessionTagsDocument = gql`
+    query AnalysisSessionTags($analysisSessionId: ID!) {
+  analysisSession(id: $analysisSessionId) {
+    id
+    name
+    started
+    stopped
+    tags {
+      id
+      name
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AnalysisSessionTagsGQL extends Apollo.Query<AnalysisSessionTagsQuery, AnalysisSessionTagsQueryVariables> {
+    document = AnalysisSessionTagsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const AllAnalysisSessionsDocument = gql`
     query allAnalysisSessions {
   analysisSessions {
     id
     name
+    tags {
+      id
+      name
+    }
     started
     stopped
   }
@@ -1016,11 +1164,34 @@ export const AllAnalysisSessionsDocument = gql`
       super(apollo);
     }
   }
+export const AllTagsDocument = gql`
+    query AllTags {
+  tags {
+    id
+    name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AllTagsGQL extends Apollo.Query<AllTagsQuery, AllTagsQueryVariables> {
+    document = AllTagsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const OneAnalysisSessionDocument = gql`
     query OneAnalysisSession($analysisSessionId: ID!) {
   analysisSession(id: $analysisSessionId) {
     id
     name
+    tags {
+      id
+      name
+    }
     started
     stopped
   }
@@ -1032,6 +1203,47 @@ export const OneAnalysisSessionDocument = gql`
   })
   export class OneAnalysisSessionGQL extends Apollo.Query<OneAnalysisSessionQuery, OneAnalysisSessionQueryVariables> {
     document = OneAnalysisSessionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const QueryOneTagDocument = gql`
+    query queryOneTag($tagId: ID!) {
+  tag(id: $tagId) {
+    id
+    name
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class QueryOneTagGQL extends Apollo.Query<QueryOneTagQuery, QueryOneTagQueryVariables> {
+    document = QueryOneTagDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RemoveTagFromSessionDocument = gql`
+    mutation removeTagFromSession($sessionId: ID!, $tagId: ID!) {
+  removeTagsFromAnalysisSession(input: {id: "$sessionId", relationIds: "$tagId"}) {
+    id
+    tags {
+      id
+      name
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RemoveTagFromSessionGQL extends Apollo.Mutation<RemoveTagFromSessionMutation, RemoveTagFromSessionMutationVariables> {
+    document = RemoveTagFromSessionDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

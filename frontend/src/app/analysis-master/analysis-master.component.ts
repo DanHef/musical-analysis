@@ -8,8 +8,8 @@ import { environment } from '../../environments/environment';
 import TimelinesChart, { Group } from 'timelines-chart';
 import { Apollo, gql, Mutation } from 'apollo-angular';
 import { map } from "rxjs/operators";
-import { AllAnalysisSessionsGQL, OneAnalysisSessionGQL } from 'src/generated/graphql';
-import { useApolloClient, useMutation } from '@apollo/client';
+import { AllAnalysisSessionsGQL, AllTagsGQL, AnalysisSessionTagsGQL, OneAnalysisSessionGQL, RemoveTagFromSessionGQL, QueryOneTagGQL } from 'src/generated/graphql';
+import { privateEncrypt } from 'crypto';
 
 interface AnalysisSessionsResponse {
     analysisSessions: Array<any>
@@ -19,10 +19,17 @@ interface AnalysisSessionResponse {
     analysisSession: any
 }
 
+interface CreateTagResponse {
+    createOneTag: any
+}
+
 interface CreateAnalysisSessionResponse {
     createOneAnalysisSession: any
 }
 
+interface AddAnalysisSessionTagResponse {
+    addAnalysisSessionTag: any
+}
 
 const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: ID!){
     deleteOneAnalysisSession(input: {
@@ -63,14 +70,24 @@ export class AnalysisMasterComponent implements OnInit {
     analysis;
     statistics;
     displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
+    displayedTagsColumns: string[] = ['id', 'name', 'delete']
     timelineChart;
     statisticsData;
     sessionDurationInSeconds;
+    tags;
+    newTagName = '';
+    selectedTag;
+    sessionTags;
+    tagDescription
 
     constructor(private readonly httpClient: HttpClient,
                 private readonly apollo: Apollo,
                 private readonly queryAllAnalysisSessionsService: AllAnalysisSessionsGQL,
-                private readonly queryOneAnalysisSessionService: OneAnalysisSessionGQL) { }
+                private readonly queryAllTagsService: AllTagsGQL,
+                private readonly queryAllAnalysisSessionTagsService: AnalysisSessionTagsGQL,
+                private readonly queryOneAnalysisSessionService: OneAnalysisSessionGQL,
+                private readonly removeOneTagFromSessionService: RemoveTagFromSessionGQL,
+                private readonly queryOneTagService: QueryOneTagGQL) { }
 
     public ngOnInit() {
         this.wavesurfer = WaveSurfer.create({
@@ -90,6 +107,7 @@ export class AnalysisMasterComponent implements OnInit {
         this.wavesurfer.load(environment.audioEndpoint + '/Trauer-Anfang.mp3');
 
         this.loadAnalysis();
+        this.loadTags();
     }
 
     public async createAnalysisSession() {
@@ -118,6 +136,64 @@ export class AnalysisMasterComponent implements OnInit {
         await this.loadAnalysis();
         this.setSelectedAnalysisSession(newAnalysisSession);
     }
+
+    public async createTag() {
+        const newTag = await this.apollo.mutate({
+            mutation: gql(`
+            mutation{
+                createOneTag(input: {
+                    tag: {
+                        name: "${this.newTagName}"}
+                })
+                {
+                    id
+                    name}}`
+            ),
+            update: (cache, { data }) => {
+                const existingTags: any = cache.readQuery({
+                    query: this.queryAllTagsService.document
+                });
+                const newTag = data["createOneTag"];
+                const alltags = [...existingTags.tags, newTag];
+                cache.writeQuery({
+                    query: this.queryAllTagsService.document,
+                    data: { tags: alltags }
+                });
+            },
+        }).pipe(map(result => result.data && (result.data as CreateTagResponse).createOneTag)).toPromise();
+        
+        this.selectedTag = newTag;
+        await this.loadTags();
+        this.addTagToAnalysisSession();
+    }
+
+    public async addTagToAnalysisSession() {
+        const mutatedSession = await this.apollo.mutate({
+            mutation: gql(`
+            mutation {
+                addTagsToAnalysisSession(input: {
+                  id: "${this.selectedAnalysisSession.id}",
+                  relationIds: "${this.selectedTag.id}"
+                })
+                {id name started stopped tags {id name}}
+              }`
+            ),
+            update: (cache, { data }) => {
+                const existingSessionTags: any = cache.readQuery({
+                    query: this.queryAllAnalysisSessionTagsService.document
+                });
+                const newSessionTags = data["addTagsToAnalysisSession"];
+                cache.writeQuery({
+                    query: this.queryAllAnalysisSessionTagsService.document,
+                    data: { analysisSession: newSessionTags }
+                });
+            },
+        }).pipe(map(result => result.data && (result.data as AddAnalysisSessionTagResponse).addAnalysisSessionTag)).toPromise();
+        
+        await this.loadTags();
+        this.loadAnalysisSessionTags();
+    }
+
 
     public async startMusic() {
         //await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
@@ -219,8 +295,31 @@ export class AnalysisMasterComponent implements OnInit {
         await this.loadAnalysis();
     }
 
+    public async onTagDelete(tag) {
+        await this.apollo.mutate({
+            mutation: gql(`
+            mutation {
+                removeTagsFromAnalysisSession(input: {
+                  id: "${this.selectedAnalysisSession.id}",
+                  relationIds: "${tag.id}"
+                })
+                {id name started stopped tags {id name}}
+              }`
+            ),
+        }).toPromise();
+        await this.loadAnalysis();
+    }
+
     public onSessionSelected(event) {
         this.loadAnalysisById(event.source.value);
+    }
+
+    public async onTagSelected(event) {
+        const loadedTagResponse = await this.queryOneTagService.fetch({
+            tagId: event.source.value
+        }).toPromise();
+        this.selectedTag = loadedTagResponse.data.tag
+        return this.selectedTag
     }
 
     public async uploadFile($event) {
@@ -305,8 +404,12 @@ export class AnalysisMasterComponent implements OnInit {
 
     private async loadAnalysis() {
         this.analysis = await (await this.queryAllAnalysisSessionsService.fetch().toPromise()).data.analysisSessions;
-
         return this.analysis;
+    }
+    
+    private async loadTags() {
+        this.tags = await (await this.queryAllTagsService.fetch().toPromise()).data.tags;
+        return this.tags;
     }
 
     private async loadAnalysisById(analysisId) {
@@ -322,6 +425,7 @@ export class AnalysisMasterComponent implements OnInit {
 
     private setSelectedAnalysisSession(analysisSession) {
         this.selectedAnalysisSession = analysisSession;
+        this.sessionTags = analysisSession.tags
     }
 
     private async loadAnalysisStatistics() {
@@ -329,6 +433,11 @@ export class AnalysisMasterComponent implements OnInit {
         this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id + '/statistics').toPromise();
 
         return this.statistics;
+    }
+    
+    private async loadAnalysisSessionTags() {
+        this.sessionTags = await (await this.queryAllAnalysisSessionTagsService.fetch().toPromise()).data.analysisSession.tags;
+        return this.sessionTags;
     }
 
 }

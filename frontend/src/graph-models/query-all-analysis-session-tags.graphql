@@ -1,0 +1,14 @@
+query AnalysisSessionTags ($analysisSessionId: ID!){
+    analysisSession(id: $analysisSessionId)
+    {
+      id
+      name
+      started
+      stopped
+      tags
+      {
+        id
+        name
+      }
+    }
+  }
