@@ -9,6 +9,7 @@ mutation removeTagFromSession($sessionId: ID!, $tagId: ID!) {
     tags {
       id 
       name
+      description
     }
   }
 }

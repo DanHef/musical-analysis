@@ -35,6 +35,7 @@ interface AddAnalysisSessionTagResponse {
 
 export interface TagData {
     newTagName: '';
+    newTagDescription: '';
 }
 
 const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: ID!){
@@ -76,12 +77,13 @@ export class AnalysisMasterComponent implements OnInit {
     analysis;
     statistics;
     displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
-    displayedTagsColumns: string[] = ['id', 'name', 'delete']
+    displayedTagsColumns: string[] = ['id', 'name', 'description', 'delete']
     timelineChart;
     statisticsData;
     sessionDurationInSeconds;
     tags;
     newTagName = '';
+    newTagDescription = '';
     selectedTag;
     sessionTags;
     tagDescription
@@ -151,11 +153,15 @@ export class AnalysisMasterComponent implements OnInit {
             mutation{
                 createOneTag(input: {
                     tag: {
-                        name: "${this.newTagName}"}
+                        name: "${this.newTagName}"
+                        description: "${this.newTagDescription}"
+                    }
                 })
                 {
                     id
-                    name}}`
+                    name
+                    description
+                }}`
             ),
             update: (cache, { data }) => {
                 const existingTags: any = cache.readQuery({
@@ -444,10 +450,11 @@ export class AnalysisMasterComponent implements OnInit {
     public openTagDialog() {
         const dialogRef = this.tagDialog.open(TagDialog, {
             width: '300px',
-            data: { newTagName: '' }
+            data: { newTagName: '', newTagDescription: ''}
         });
         dialogRef.afterClosed().subscribe(result => {
-            this.newTagName = result;
+            this.newTagName = result.newTagName;
+            this.newTagDescription = result.newTagDescription;
             this.createTag();
         });
     }

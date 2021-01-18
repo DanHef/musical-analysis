@@ -194,6 +194,7 @@ export type CreatePart = {
 };
 
 export type CreateTag = {
+  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
 };
@@ -724,6 +725,7 @@ export type StringFieldComparison = {
 
 export type Tag = {
   __typename?: 'Tag';
+  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
 };
@@ -735,12 +737,14 @@ export type TagAvgAggregate = {
 
 export type TagCountAggregate = {
   __typename?: 'TagCountAggregate';
+  description?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['Int']>;
 };
 
 export type TagDeleteFilter = {
   and?: Maybe<Array<TagDeleteFilter>>;
+  description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
   name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagDeleteFilter>>;
@@ -748,12 +752,14 @@ export type TagDeleteFilter = {
 
 export type TagDeleteResponse = {
   __typename?: 'TagDeleteResponse';
+  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
 };
 
 export type TagFilter = {
   and?: Maybe<Array<TagFilter>>;
+  description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
   name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagFilter>>;
@@ -761,12 +767,14 @@ export type TagFilter = {
 
 export type TagMaxAggregate = {
   __typename?: 'TagMaxAggregate';
+  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
 };
 
 export type TagMinAggregate = {
   __typename?: 'TagMinAggregate';
+  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
 };
@@ -778,6 +786,7 @@ export type TagSort = {
 };
 
 export enum TagSortFields {
+  Description = 'description',
   Id = 'id',
   Name = 'name'
 }
@@ -789,6 +798,7 @@ export type TagSumAggregate = {
 
 export type TagUpdateFilter = {
   and?: Maybe<Array<TagUpdateFilter>>;
+  description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
   name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagUpdateFilter>>;
@@ -872,6 +882,7 @@ export type UpdatePart = {
 };
 
 export type UpdateTag = {
+  description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
 };
@@ -993,6 +1004,7 @@ export type UserUpdateFilter = {
 
 export type AddTagMutationVariables = Exact<{
   nameOfTag: Scalars['String'];
+  tagDescription: Scalars['String'];
 }>;
 
 
@@ -1000,7 +1012,7 @@ export type AddTagMutation = (
   { __typename?: 'Mutation' }
   & { createOneTag: (
     { __typename?: 'Tag' }
-    & Pick<Tag, 'id' | 'name'>
+    & Pick<Tag, 'id' | 'name' | 'description'>
   ) }
 );
 
@@ -1016,7 +1028,7 @@ export type AnalysisSessionTagsQuery = (
     & Pick<AnalysisSession, 'id' | 'name' | 'started' | 'stopped'>
     & { tags?: Maybe<Array<(
       { __typename?: 'Tag' }
-      & Pick<Tag, 'id' | 'name'>
+      & Pick<Tag, 'id' | 'name' | 'description'>
     )>> }
   )> }
 );
@@ -1031,7 +1043,7 @@ export type AllAnalysisSessionsQuery = (
     & Pick<AnalysisSession, 'id' | 'name' | 'started' | 'stopped'>
     & { tags?: Maybe<Array<(
       { __typename?: 'Tag' }
-      & Pick<Tag, 'id' | 'name'>
+      & Pick<Tag, 'id' | 'name' | 'description'>
     )>> }
   )> }
 );
@@ -1043,7 +1055,7 @@ export type AllTagsQuery = (
   { __typename?: 'Query' }
   & { tags: Array<(
     { __typename?: 'Tag' }
-    & Pick<Tag, 'id' | 'name'>
+    & Pick<Tag, 'id' | 'name' | 'description'>
   )> }
 );
 
@@ -1059,7 +1071,7 @@ export type OneAnalysisSessionQuery = (
     & Pick<AnalysisSession, 'id' | 'name' | 'started' | 'stopped'>
     & { tags?: Maybe<Array<(
       { __typename?: 'Tag' }
-      & Pick<Tag, 'id' | 'name'>
+      & Pick<Tag, 'id' | 'name' | 'description'>
     )>> }
   )> }
 );
@@ -1073,7 +1085,7 @@ export type QueryOneTagQuery = (
   { __typename?: 'Query' }
   & { tag?: Maybe<(
     { __typename?: 'Tag' }
-    & Pick<Tag, 'id' | 'name'>
+    & Pick<Tag, 'id' | 'name' | 'description'>
   )> }
 );
 
@@ -1090,16 +1102,17 @@ export type RemoveTagFromSessionMutation = (
     & Pick<AnalysisSession, 'id'>
     & { tags?: Maybe<Array<(
       { __typename?: 'Tag' }
-      & Pick<Tag, 'id' | 'name'>
+      & Pick<Tag, 'id' | 'name' | 'description'>
     )>> }
   ) }
 );
 
 export const AddTagDocument = gql`
-    mutation addTag($nameOfTag: String!) {
-  createOneTag(input: {tag: {name: $nameOfTag}}) {
+    mutation addTag($nameOfTag: String!, $tagDescription: String!) {
+  createOneTag(input: {tag: {name: $nameOfTag, description: $tagDescription}}) {
     id
     name
+    description
   }
 }
     `;
@@ -1124,6 +1137,7 @@ export const AnalysisSessionTagsDocument = gql`
     tags {
       id
       name
+      description
     }
   }
 }
@@ -1147,6 +1161,7 @@ export const AllAnalysisSessionsDocument = gql`
     tags {
       id
       name
+      description
     }
     started
     stopped
@@ -1169,6 +1184,7 @@ export const AllTagsDocument = gql`
   tags {
     id
     name
+    description
   }
 }
     `;
@@ -1191,6 +1207,7 @@ export const OneAnalysisSessionDocument = gql`
     tags {
       id
       name
+      description
     }
     started
     stopped
@@ -1213,6 +1230,7 @@ export const QueryOneTagDocument = gql`
   tag(id: $tagId) {
     id
     name
+    description
   }
 }
     `;
@@ -1234,6 +1252,7 @@ export const RemoveTagFromSessionDocument = gql`
     tags {
       id
       name
+      description
     }
   }
 }

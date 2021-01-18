@@ -5,6 +5,7 @@ query allAnalysisSessions {
             tags {
                   id
                   name
+                  description
             }
             started 
             stopped

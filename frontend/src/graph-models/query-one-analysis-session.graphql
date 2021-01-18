@@ -6,6 +6,7 @@ query OneAnalysisSession ($analysisSessionId: ID!){
         tags {
             id
             name
+            description
         }
         started
         stopped

@@ -177,6 +177,7 @@ input CreatePart {
 }
 
 input CreateTag {
+  description: String
   id: ID
   name: String
 }
@@ -508,6 +509,7 @@ input StringFieldComparison {
 }
 
 type Tag {
+  description: String
   id: ID!
   name: String
 }
@@ -517,35 +519,41 @@ type TagAvgAggregate {
 }
 
 type TagCountAggregate {
+  description: Int
   id: Int
   name: Int
 }
 
 input TagDeleteFilter {
   and: [TagDeleteFilter!]
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [TagDeleteFilter!]
 }
 
 type TagDeleteResponse {
+  description: String
   id: ID
   name: String
 }
 
 input TagFilter {
   and: [TagFilter!]
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [TagFilter!]
 }
 
 type TagMaxAggregate {
+  description: String
   id: ID
   name: String
 }
 
 type TagMinAggregate {
+  description: String
   id: ID
   name: String
 }
@@ -557,6 +565,7 @@ input TagSort {
 }
 
 enum TagSortFields {
+  description
   id
   name
 }
@@ -567,6 +576,7 @@ type TagSumAggregate {
 
 input TagUpdateFilter {
   and: [TagUpdateFilter!]
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [TagUpdateFilter!]
@@ -657,6 +667,7 @@ input UpdatePart {
 }
 
 input UpdateTag {
+  description: String
   id: ID
   name: String
 }

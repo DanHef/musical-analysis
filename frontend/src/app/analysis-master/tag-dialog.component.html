@@ -4,9 +4,13 @@
         <mat-label>Neuer Tag</mat-label>
         <input matInput [(ngModel)]="data.newTagName">
     </mat-form-field>
+    <mat-form-field>
+        <mat-label>Beschreibung</mat-label>
+        <textarea matInput [(ngModel)]="data.newTagDescription"></textarea>
+    </mat-form-field>
 </div>
 <div mat-dialog-actions>
-    <button mat-button class="mat-raised-button mat-primary" [mat-dialog-close]="data.newTagName" cdkFocusInitial
+    <button mat-button class="mat-raised-button mat-primary" [mat-dialog-close]="data"
         disabled="{{ data.newTagName === '' }}">
         Tag hinzufügen
     </button>

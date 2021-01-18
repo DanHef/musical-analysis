@@ -1,6 +1,7 @@
-query queryTag($tagId: ID!) {
+query queryOneTag($tagId: ID!) {
   tag(id: $tagId){
     id
     name
+    description
   }
 }

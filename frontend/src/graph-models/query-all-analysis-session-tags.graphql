@@ -9,6 +9,7 @@ query AnalysisSessionTags ($analysisSessionId: ID!){
       {
         id
         name
+        description
       }
     }
   }

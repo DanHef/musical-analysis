@@ -73,7 +73,7 @@
         <mat-card>
             <mat-card-title>Tags der Session</mat-card-title>
             <mat-card-content>
-                <div style="width: 50%; float: left;">
+                <div style="width: 100%; float: left;">
                     <mat-table [dataSource]="sessionTags" class="mat-elevation-z8">
                         <!-- ID Column -->
                         <ng-container matColumnDef="id">
@@ -85,6 +85,12 @@
                         <ng-container matColumnDef="name">
                             <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
                             <mat-cell *matCellDef="let tag"> {{ tag.name }} </mat-cell>
+                        </ng-container>
+
+                        <!-- Description Column -->
+                        <ng-container matColumnDef="description">
+                            <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
+                            <mat-cell *matCellDef="let tag"> {{ tag.description }} </mat-cell>
                         </ng-container>
 
                         <!-- Delete Column -->
@@ -100,7 +106,7 @@
                         <mat-row *matRowDef="let row; columns: displayedTagsColumns;"></mat-row>
                     </mat-table>
                     <button mat-mini-fab color="basic" (click)="openTagDialog()"
-                        disabled="{{ analysis.name === '' }}">
+                        >
                         <mat-icon>plus_one</mat-icon>
                     </button>
                 </div>

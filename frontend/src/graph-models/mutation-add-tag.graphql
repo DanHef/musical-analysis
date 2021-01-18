@@ -1,11 +1,13 @@
-mutation addTag($nameOfTag: String!) {
+mutation addTag($nameOfTag: String!, $tagDescription: String!) {
   createOneTag(input: {
     tag: {
       name: $nameOfTag
+      description: $tagDescription
     }
   })
   {
     id
     name
+    description
   }
 }

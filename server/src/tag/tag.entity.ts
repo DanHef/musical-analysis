@@ -13,6 +13,7 @@ export class TagEntity {
     @Column({nullable: true})
     name: string;
 
+    @FilterableField({nullable: true})
     @Column({nullable: true})
     description: string;
 }
