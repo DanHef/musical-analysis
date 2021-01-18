@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Tag hinzufügen</h2>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Neuer Tag</mat-label>
+        <input matInput [(ngModel)]="data.newTagName">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button class="mat-raised-button mat-primary" [mat-dialog-close]="data.newTagName" cdkFocusInitial
+        disabled="{{ data.newTagName === '' }}">
+        Tag hinzufügen
+    </button>
+    <button mat-button class="mat-raised-button" (click)="onNoClick()">
+        Abbrechen
+    </button>
+</div>

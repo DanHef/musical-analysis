@@ -12,8 +12,8 @@
     <mat-form-field style="margin: 0px 0 0 20px;">
       <mat-label>Analysis Session ID</mat-label>
       <mat-select [(value)]="seletedAnalysisSessionID" (selectionChange)="onSessionSelected()">
-        <mat-option *ngFor="let analysisItem of analysis" [value]="analysisItem.id">
-          {{analysisItem.id}}
+        <mat-option *ngFor="let analysisItem of allSessions" [value]="analysisItem.id">
+          {{analysisItem.name}}
         </mat-option>
       </mat-select>
     </mat-form-field>

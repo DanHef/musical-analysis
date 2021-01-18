@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
@@ -10,6 +10,8 @@ import { Apollo, gql, Mutation } from 'apollo-angular';
 import { map } from "rxjs/operators";
 import { AllAnalysisSessionsGQL, AllTagsGQL, AnalysisSessionTagsGQL, OneAnalysisSessionGQL, RemoveTagFromSessionGQL, QueryOneTagGQL } from 'src/generated/graphql';
 import { privateEncrypt } from 'crypto';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { TagDialog } from "./tag-dialog.component";
 
 interface AnalysisSessionsResponse {
     analysisSessions: Array<any>
@@ -29,6 +31,10 @@ interface CreateAnalysisSessionResponse {
 
 interface AddAnalysisSessionTagResponse {
     addAnalysisSessionTag: any
+}
+
+export interface TagData {
+    newTagName: '';
 }
 
 const MUTATION_DELETE_ONE_ANALYSIS_SESSION = gql(`mutation ($analysisSessionId: ID!){
@@ -65,7 +71,7 @@ const MUTATION_UPLOAD = gql(`mutation ($analysisSessionId: ID!, $file: Upload!) 
 })
 export class AnalysisMasterComponent implements OnInit {
     analysisSessionID = '';
-    selectedAnalysisSession;
+    currentAnalysisSession;
     wavesurfer;
     analysis;
     statistics;
@@ -87,7 +93,9 @@ export class AnalysisMasterComponent implements OnInit {
                 private readonly queryAllAnalysisSessionTagsService: AnalysisSessionTagsGQL,
                 private readonly queryOneAnalysisSessionService: OneAnalysisSessionGQL,
                 private readonly removeOneTagFromSessionService: RemoveTagFromSessionGQL,
-                private readonly queryOneTagService: QueryOneTagGQL) { }
+                private readonly queryOneTagService: QueryOneTagGQL,
+                private readonly zone: NgZone,
+                private tagDialog: MatDialog) { }
 
     public ngOnInit() {
         this.wavesurfer = WaveSurfer.create({
@@ -134,7 +142,7 @@ export class AnalysisMasterComponent implements OnInit {
         }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
 
         await this.loadAnalysis();
-        this.setSelectedAnalysisSession(newAnalysisSession);
+        this.setcurrentAnalysisSession(newAnalysisSession);
     }
 
     public async createTag() {
@@ -172,7 +180,7 @@ export class AnalysisMasterComponent implements OnInit {
             mutation: gql(`
             mutation {
                 addTagsToAnalysisSession(input: {
-                  id: "${this.selectedAnalysisSession.id}",
+                  id: "${this.currentAnalysisSession.id}",
                   relationIds: "${this.selectedTag.id}"
                 })
                 {id name started stopped tags {id name}}
@@ -196,13 +204,10 @@ export class AnalysisMasterComponent implements OnInit {
 
 
     public async startMusic() {
-        //await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
-        //    started: new Date().toISOString()
-        //}).toPromise()
         const startMusic = await this.apollo.mutate({
             mutation: MUTATION_UPDATE_ONE_ANALYSIS_SESSION_START,
             variables: {
-                analysisSessionId: this.selectedAnalysisSession.id,
+                analysisSessionId: this.currentAnalysisSession.id,
                 timeStamp: new Date().toISOString()
             },
             update: (cache, { data }) => {
@@ -211,7 +216,7 @@ export class AnalysisMasterComponent implements OnInit {
                 });
 
                 const sessions = existingAnalysisSessions.analysisSessions.map(session => {
-                    if(session.id === this.selectedAnalysisSession.id) {
+                    if(session.id === this.currentAnalysisSession.id) {
                         return {...session, started: data["updateOneAnalysisSession"].started}
                     } else {
                         return session;
@@ -227,19 +232,19 @@ export class AnalysisMasterComponent implements OnInit {
 
 
         this.loadAnalysis();
-        this.loadAnalysisById(this.selectedAnalysisSession.id);
+        this.loadAnalysisById(this.currentAnalysisSession.id);
 
         this.wavesurfer.play();
     }
 
     public async stopMusic() {
-        //await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id, {
+        //await this.httpClient.put(environment.apiEndpoint + '/analysis/' + this.currentAnalysisSession.id, {
         //    stopped: new Date().toISOString()
         //}).toPromise();
         const stopMusic = await this.apollo.mutate({
             mutation: MUTATION_UPDATE_ONE_ANALYSIS_SESSION_STOP,
             variables: {
-                analysisSessionId: this.selectedAnalysisSession.id,
+                analysisSessionId: this.currentAnalysisSession.id,
                 timeStamp: new Date().toISOString()
             },
             update: (cache, { data }) => {
@@ -248,7 +253,7 @@ export class AnalysisMasterComponent implements OnInit {
                 });
 
                 const sessions = existingAnalysisSessions.analysisSessions.map(session => {
-                    if(session.id === this.selectedAnalysisSession.id) {
+                    if(session.id === this.currentAnalysisSession.id) {
                         return {...session, stopped: data["updateOneAnalysisSession"].stopped}
                     } else {
                         return session;
@@ -265,7 +270,7 @@ export class AnalysisMasterComponent implements OnInit {
 
 
         this.loadAnalysis();
-        this.loadAnalysisById(this.selectedAnalysisSession.id);
+        this.loadAnalysisById(this.currentAnalysisSession.id);
 
         this.wavesurfer.stop();
     }
@@ -291,7 +296,6 @@ export class AnalysisMasterComponent implements OnInit {
                 });
             },
         }).pipe(map(result => result.data && (result.data as CreateAnalysisSessionResponse).createOneAnalysisSession)).toPromise();
-        //await this.httpClient.delete(environment.apiEndpoint + '/analysis/' + analysis.id).toPromise();
         await this.loadAnalysis();
     }
 
@@ -300,7 +304,7 @@ export class AnalysisMasterComponent implements OnInit {
             mutation: gql(`
             mutation {
                 removeTagsFromAnalysisSession(input: {
-                  id: "${this.selectedAnalysisSession.id}",
+                  id: "${this.currentAnalysisSession.id}",
                   relationIds: "${tag.id}"
                 })
                 {id name started stopped tags {id name}}
@@ -308,10 +312,13 @@ export class AnalysisMasterComponent implements OnInit {
             ),
         }).toPromise();
         await this.loadAnalysis();
+        await this.loadAnalysisSessionTags();
     }
 
     public onSessionSelected(event) {
-        this.loadAnalysisById(event.source.value);
+        if(event.isUserInput) {
+            this.loadAnalysisById(event.source.value);
+        }
     }
 
     public async onTagSelected(event) {
@@ -323,7 +330,7 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     public async uploadFile($event) {
-        let currentId = this.selectedAnalysisSession.id;
+        let currentId = this.currentAnalysisSession.id;
         this.apollo.mutate(
             {
                 mutation: MUTATION_UPLOAD,
@@ -336,19 +343,11 @@ export class AnalysisMasterComponent implements OnInit {
                   useMultipart: true
                 }
             }).toPromise();
-//        var _map = { 
-//                file: ["variables.file"]
-//        }
-//        var file = $event.target.files[0];
-//        var fd = new FormData();
-//        fd.append('operations', JSON.stringify(operations));
-//        fd.append('map', JSON.stringify(_map));
-//        fd.append('file', file, file.name);
     }
     
     public async onStatisticsRefresh() {
         this.statisticsData = await this.loadAnalysisStatistics();
-        this.loadAnalysisById(this.selectedAnalysisSession.id);
+        this.loadAnalysisById(this.currentAnalysisSession.id);
 
         // tslint:disable-next-line:forin
         for (const user in this.statisticsData) {
@@ -419,18 +418,20 @@ export class AnalysisMasterComponent implements OnInit {
 
         const loadedAnalysisSession = loadedAnalysisSessionResponse.data.analysisSession;
         
-        this.setSelectedAnalysisSession(loadedAnalysisSession);
+        this.setcurrentAnalysisSession(loadedAnalysisSession);
+        //const sessionTags = this.loadAnalysisSessionTags();
         return loadedAnalysisSession;
     }
 
-    private setSelectedAnalysisSession(analysisSession) {
-        this.selectedAnalysisSession = analysisSession;
+    private setcurrentAnalysisSession(analysisSession) {
+        this.currentAnalysisSession
+         = analysisSession;
         this.sessionTags = analysisSession.tags
     }
 
     private async loadAnalysisStatistics() {
         // tslint:disable-next-line:max-line-length
-        this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.selectedAnalysisSession.id + '/statistics').toPromise();
+        this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.currentAnalysisSession.id + '/statistics').toPromise();
 
         return this.statistics;
     }
@@ -440,4 +441,14 @@ export class AnalysisMasterComponent implements OnInit {
         return this.sessionTags;
     }
 
+    public openTagDialog() {
+        const dialogRef = this.tagDialog.open(TagDialog, {
+            width: '300px',
+            data: { newTagName: '' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            this.newTagName = result;
+            this.createTag();
+        });
+    }
 }

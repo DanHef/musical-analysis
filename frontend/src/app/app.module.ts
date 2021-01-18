@@ -23,11 +23,14 @@ import { AnalysisMasterComponent } from './analysis-master/analysis-master.compo
 import { NavigationComponent } from './navigation/navigation.component';
 import { GraphQLModule } from './graphql.module';
 
+import { TagDialog } from './analysis-master/tag-dialog.component'
+
 @NgModule({
   declarations: [
     AppComponent,
     AnalysisMasterComponent,
-    NavigationComponent
+    NavigationComponent,
+    TagDialog,
   ],
   imports: [
     BrowserModule,

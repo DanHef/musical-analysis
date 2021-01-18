@@ -1,0 +1,9 @@
+.card {
+    padding: 20px;
+    float: left;
+    box-sizing: border-box;
+}
+
+.audio-button {
+    margin-right: 10px;
+}

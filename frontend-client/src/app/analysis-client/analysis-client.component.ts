@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { EditPartDialogComponent } from '../edit-part/edit-part.component';
+import { Apollo, gql, Mutation } from 'apollo-angular';
+import { all } from 'sequelize/types/lib/operators';
 
 @Component({
   selector: 'app-analysis-client',
@@ -11,6 +13,7 @@ import { EditPartDialogComponent } from '../edit-part/edit-part.component';
 })
 export class AnalysisClientComponent implements OnInit {
   username = '';
+  allSessions = [];
   seletedAnalysisSessionID: string;
   selectedAnalysis;
   analysis;
@@ -18,11 +21,13 @@ export class AnalysisClientComponent implements OnInit {
   userParts = [];
   displayedColumns: string[] = ['stopped', 'tag', 'description', 'edit'];
 
-  constructor(private readonly httpClient: HttpClient, private readonly dialog: MatDialog) { }
+  constructor(private readonly httpClient: HttpClient,
+              private readonly dialog: MatDialog,
+              private readonly apollo: Apollo) { }
 
   ngOnInit(): void {
     this.loadAvailableAnalysisSessions();
-    this.loadTags();
+    //this.loadTags();
   }
 
   public async markNewPart(tagId?: string) {
@@ -88,7 +93,12 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   private async loadAvailableAnalysisSessions() {
-    this.analysis = await this.httpClient.get(environment.apiEndpoint + '/analysis').toPromise();
+    const QUERY_All = gql(`query {analysisSessions {id name}}`);
+    const allSessionsObject = await this.apollo.query({
+      query: QUERY_All
+    }).toPromise();
+    this.allSessions = (allSessionsObject.data as any).analysisSessions;
+    //this.analysis = await this.httpClient.get(environment.apiEndpoint + '/analysis').toPromise();
   }
 
   private async loadPartsForUser() {
