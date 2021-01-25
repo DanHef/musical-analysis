@@ -4,6 +4,7 @@
   </mat-card-title>
   <mat-card-content>
     <mat-form-field style="margin: 20px 0 0 20px;">
+      <mat-label>Benutzername</mat-label>
       <input matInput placeholder="Username" (change)="onUsernameChanged()" [value]="username" (input)="username = $event.target.value">
     </mat-form-field>
 
@@ -27,7 +28,7 @@
   <mat-card-content>
 
     <button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)" [disabled]="!selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1"
-      style="margin: 20px 20px 20px 0px;" class="mat-raised-button">{{tag.description}}</button>
+      style="margin: 20px 20px 20px 0px;" class="mat-raised-button">{{tag.name}}</button>
 
     <h2>Markierungen</h2>
 
@@ -47,7 +48,7 @@
       <!-- Tag Column -->
       <ng-container matColumnDef="tag">
         <mat-header-cell *matHeaderCellDef>Kategorie</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.tagDescription}} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{element.tag.name}} </mat-cell>
       </ng-container>
 
       <!-- Description Column -->

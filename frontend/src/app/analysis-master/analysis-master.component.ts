@@ -430,8 +430,7 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     private setcurrentAnalysisSession(analysisSession) {
-        this.currentAnalysisSession
-         = analysisSession;
+        this.currentAnalysisSession = analysisSession;
         this.sessionTags = analysisSession.tags
     }
 

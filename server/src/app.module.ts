@@ -11,6 +11,7 @@ import { AnalysisSessionEntity } from './analysis-session/analysis-session.entit
 import { UserModule } from './user/user.module';
 import { PartModule } from './part/part.module';
 import { TagModule } from './tag/tag.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [

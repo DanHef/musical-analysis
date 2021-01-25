@@ -1,4 +1,4 @@
-import { FilterableField, Relation } from "@nestjs-query/query-graphql";
+import { FilterableField, FilterableRelation, Relation } from "@nestjs-query/query-graphql";
 import { ObjectType, ID } from "@nestjs/graphql";
 import { PartEntity } from "src/part/part.entity";
 import { TagEntity } from "src/tag/tag.entity";
@@ -8,8 +8,10 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMa
 @ObjectType('AnalysisSession')
 @Relation('moderator', () => UserEntity, {nullable: true})
 @Relation('assignees', () => [UserEntity], {nullable: true})
-@Relation('parts', () => [PartEntity], {nullable: true})
-@Relation('tags', () => [TagEntity], {nullable: true})
+//@Relation('parts', () => [PartEntity], {nullable: true, allowFiltering: true})
+@Relation('tags', () => [TagEntity], {nullable: true, allowFiltering: true})
+@FilterableRelation('parts', () => [PartEntity], {nullable: true, allowFiltering: true})
+
 @Entity('analysis_session')
 export class AnalysisSessionEntity {
     @FilterableField(type => ID)
@@ -30,7 +32,6 @@ export class AnalysisSessionEntity {
     })
     assignees: UserEntity[];
 
-
     @FilterableField({nullable: true})
     @Column({nullable: true})
     started: Date;
@@ -39,12 +40,15 @@ export class AnalysisSessionEntity {
     @Column({nullable: true})
     stopped: Date;
 
-    @ManyToMany(type => TagEntity)
+    //@FilterableField()
+    @ManyToMany(type => TagEntity, tag => tag.name)
     @JoinTable({
-        name: "tag_name"
+        name: "tag_id",
     })
     tags: TagEntity[];
 
-    @OneToMany(type => PartEntity, (part) => part.analysisSession)
-    parts;
+    //@FilterableField()
+    @OneToMany(() => PartEntity, part => part.analysisSession)
+    parts: PartEntity[];
+
 }
