@@ -8,8 +8,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne
 
 @ObjectType('Part')
 //@Relation('user', () => UserEntity, {nullable: true})
-@Relation('analysisSession', () => AnalysisSessionEntity, {nullable: true})
-@Relation('tag', () => TagEntity, {nullable: true})
+@FilterableRelation('analysisSession', () => AnalysisSessionEntity, {nullable: true})
+@FilterableRelation('tag', () => TagEntity, {nullable: true, allowFiltering: true})
 @FilterableRelation('user', () => UserEntity, {nullable: true, allowFiltering: true})
 @InputType()
 @Entity('part')
@@ -36,24 +36,21 @@ export class PartEntity {
     })
     submitted: boolean;
 
-    @ManyToOne(() => UserEntity, user => user.id, {nullable: true})
-    @FilterableField()
+    @ManyToOne(() => UserEntity, user => user.parts, {nullable: true})
     @JoinColumn({
         name: "userId",
     })
-    @Field(type => UserEntity)
-    user!: UserEntity;
+    user: UserEntity;
 
     @ManyToOne(type => AnalysisSessionEntity)
     @JoinColumn()
     analysisSession: AnalysisSessionEntity;
 
     @ManyToOne(type => TagEntity)
+    @Field(type => TagEntity)
     @JoinColumn({
         name: "tagId"
     })
-    @Field(type => TagEntity)
-    @FilterableField()
     tag: TagEntity;
 
 }

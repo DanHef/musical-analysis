@@ -1,0 +1,24 @@
+mutation createPartWithTag ($description: String!, $started: DateTime!, $stopped: DateTime!, $submitted: Boolean!, $tagId: ID!) {
+	createOnePart (
+		input: {
+			part: {
+				description: $description
+				started: $started 
+				stopped: $stopped
+				submitted: $submitted
+				tag: {
+					id: $tagId
+				}
+			}
+		})
+	{
+		id
+		description
+		started
+		stopped
+		submitted
+		tag {
+			name
+		}
+	}
+}

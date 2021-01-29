@@ -1,0 +1,8 @@
+mutation partToSession ($sessionId: ID!, $partIds: [ID!]!){
+  addPartsToAnalysisSession (input: {
+    id: $sessionId
+    relationIds: $partIds
+  }){
+    name
+  }
+}

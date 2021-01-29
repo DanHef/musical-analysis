@@ -1,0 +1,11 @@
+query queryAllParts ($sessionId: ID!){
+    analysisSession (id: $sessionId) {
+        parts {
+            id
+            started
+            stopped
+            description
+            user {username}
+        }
+    }
+}

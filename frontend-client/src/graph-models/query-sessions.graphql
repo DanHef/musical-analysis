@@ -1,0 +1,3 @@
+query queryAllUsers {
+  users {id username}
+}

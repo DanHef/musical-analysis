@@ -6,10 +6,10 @@ import { UserEntity } from "src/user/user.entity";
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 
 @ObjectType('AnalysisSession')
-@Relation('moderator', () => UserEntity, {nullable: true})
-@Relation('assignees', () => [UserEntity], {nullable: true})
-//@Relation('parts', () => [PartEntity], {nullable: true, allowFiltering: true})
-@Relation('tags', () => [TagEntity], {nullable: true, allowFiltering: true})
+@FilterableRelation('moderator', () => UserEntity, {nullable: true})
+@FilterableRelation('assignees', () => [UserEntity], {nullable: true})
+@FilterableRelation('parts', () => [PartEntity], {nullable: true, allowFiltering: true})
+@FilterableRelation('tags', () => [TagEntity], {nullable: true, allowFiltering: true})
 @FilterableRelation('parts', () => [PartEntity], {nullable: true, allowFiltering: true})
 
 @Entity('analysis_session')
@@ -49,6 +49,7 @@ export class AnalysisSessionEntity {
 
     //@FilterableField()
     @OneToMany(() => PartEntity, part => part.analysisSession)
+    @JoinTable()
     parts: PartEntity[];
 
 }

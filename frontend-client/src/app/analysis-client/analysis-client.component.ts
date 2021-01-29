@@ -6,7 +6,15 @@ import { EditPartDialogComponent } from '../edit-part/edit-part.component';
 import { Apollo, gql, Mutation } from 'apollo-angular';
 import { all } from 'sequelize/types/lib/operators';
 import { variable } from '@angular/compiler/src/output/output_ast';
-import { OneAnalysisSessionGQL, CreatePartWithTagGQL, AddPartsToUserGQL, AddPartsToSessionGQL, SetTagOnPartGQL, QueryAllUsersGQL, QueryOneUserGQL } from 'src/generated/graphql';
+import { OneAnalysisSessionGQL,
+        CreatePartWithTagGQL,
+        AddPartsToUserGQL,
+        AddPartsToSessionGQL,
+        SetTagOnPartGQL,
+        QueryAllUsersGQL,
+        QueryOneUserGQL,
+        QueryAllPartsGQL,
+         } from 'src/generated/graphql';
 
 @Component({
   selector: 'app-analysis-client',
@@ -18,12 +26,15 @@ export class AnalysisClientComponent implements OnInit {
   username = '';
   currentUser;
   allSessions = [];
-  seletedAnalysisSessionID: string;
+  allUsers = [];
+  selectedUser;
+  selectedAnalysisSessionID: string;
   selectedAnalysis;
-  analysis;
+  analysisSession;
   tags = [];
   userParts = [];
   displayedColumns: string[] = ['started', 'stopped', 'tag', 'description', 'edit'];
+  userID: string;
 
   constructor(private ngZone: NgZone,
               private readonly httpClient: HttpClient,
@@ -36,7 +47,8 @@ export class AnalysisClientComponent implements OnInit {
               private readonly setTagOnPartService: SetTagOnPartGQL,
               //private readonly loadUserPartsService: QueryUserParts,
               private readonly queryUsersService: QueryAllUsersGQL,
-              private readonly queryOneUserService: QueryOneUserGQL
+              private readonly queryOneUserService: QueryOneUserGQL,
+              private readonly queryAllPartsService: QueryAllPartsGQL
               ) { }
 
   ngOnInit(): void {
@@ -45,7 +57,16 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   private async loadAvailableUsers() {
+    const QUERY_All_USERS = gql(`query {users {id username}}`);
+    const allUsers = await this.apollo.query({
+      query: QUERY_All_USERS
+    }).toPromise();
+    this.allUsers = (allUsers.data as any).users;
+  }
 
+  public onUsernameSelected() {
+    this.loadUser();
+    this.loadPartsForUser();
   }
 
   public async markNewPart(tagId?: string) {
@@ -64,11 +85,18 @@ export class AnalysisClientComponent implements OnInit {
       submitted: false,
       tagId: tagId
     }).toPromise()
+
+    // User verknüpfen
+    const userResponse = await this.addPartsToUserService.mutate({
+      userId: this.selectedUser.id,
+      partIds: [newPart.data.createOnePart.id]
+    }).toPromise();
+    console.log(userResponse);
     //Session verknüpfen
-    //await this.addPartsToSessionService.mutate({
-    //  partIds: [newPart.data.createOnePart.id],
-    //  sessionId: this.analysis.id
-    //}).toPromise();
+    await this.addPartsToSessionService.mutate({
+      sessionId: this.selectedAnalysis.id,
+      partIds: [newPart.data.createOnePart.id],
+    }).toPromise();
 
     //Lokal Array userParts mit dem neuen Part updaten
     //this.userParts.push(newPartWithTag.data.setTagOnPart);
@@ -77,12 +105,12 @@ export class AnalysisClientComponent implements OnInit {
     this.ngZone.run(() => {
       this.userParts.push(newPart.data.createOnePart);
     });
-    this.loadPartsForUser();
+    await this.loadPartsForUser();
     //return this.userParts;
   }
 
-  private async loadNewPart() {
-    this.userParts = await (await QueryAllUserPartsGQL.fetch().toPromise()).data.analysisSessions;
+  private async loadNewPartList() {
+    this.userParts = await (await this.queryAllPartsService.fetch().toPromise()).data.analysisSession.parts;
     return this.userParts;
   }
 
@@ -92,7 +120,7 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   public async onUsernameChanged() {
-    this.loadAnalysis();
+    this.loadUser();
     this.loadPartsForUser();
   }
 
@@ -140,7 +168,7 @@ export class AnalysisClientComponent implements OnInit {
   }
 
   private async loadPartsForUser() {
-    if (this.username && this.seletedAnalysisSessionID) {
+    if (this.username && this.selectedAnalysisSessionID) {
       // tslint:disable-next-line:max-line-length
       //this.userParts = (await this.httpClient.get(environment.apiEndpoint + '/parts?username=' + this.username + '&analysisId=' + this.seletedAnalysisSessionID).toPromise()) as [];
       //this.userParts = this.loadUserPartsService.fetch().toPromise();
@@ -159,11 +187,20 @@ export class AnalysisClientComponent implements OnInit {
     return this.httpClient.put(environment.apiEndpoint + '/parts/' + part.id, part).toPromise();
   }
 
+  private async loadUser() {   
+    //kompletten Benutzer laden
+    const loadedUserResponse = await this.queryOneUserService.fetch({
+      userId: this.userID
+    }).toPromise();
+    this.selectedUser = loadedUserResponse.data.user;
+    return this.selectedUser;
+  }
+
   private async loadAnalysis() {
-    if (this.username && this.seletedAnalysisSessionID) {
+    if (this.userID && this.selectedAnalysisSessionID) {
       // tslint:disable-next-line:max-line-length
       const loadedAnalysisSessionResponse = await this.queryOneAnalysisSessionService.fetch({
-        analysisSessionId: this.seletedAnalysisSessionID
+        analysisSessionId: this.selectedAnalysisSessionID
       }).toPromise();
       this.selectedAnalysis = loadedAnalysisSessionResponse.data.analysisSession;
       this.loadTags();

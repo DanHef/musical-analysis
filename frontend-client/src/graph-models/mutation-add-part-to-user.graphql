@@ -1,0 +1,7 @@
+mutation addPartsToUser ($userId: ID!, $partIds: [ID!]!) {
+  addPartsToUser(input: {
+    id: $userId
+    relationIds: $partIds
+    })
+  {id username parts {id} }
+}

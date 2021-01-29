@@ -1,11 +1,11 @@
-import { FilterableField, Relation } from "@nestjs-query/query-graphql";
+import { FilterableField, FilterableRelation, Relation } from "@nestjs-query/query-graphql";
 import { ObjectType, ID, Field, InputType } from "@nestjs/graphql";
 import { PartEntity } from "src/part/part.entity";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToMany, JoinTable } from "typeorm";
 
 @ObjectType('Tag')
 @Entity('tag')
-@Relation('parts', () => [PartEntity], {nullable: true})
+@FilterableRelation('parts', () => [PartEntity], {nullable: true})
 @InputType()
 export class TagEntity {
     @FilterableField(type => ID)
@@ -19,5 +19,12 @@ export class TagEntity {
     @FilterableField({nullable: true})
     @Column({nullable: true})
     description: string;
+
+    @OneToMany(
+    () => PartEntity,
+    part => part.tag,
+    )
+    @JoinTable()
+    parts!: PartEntity[];
 
 }

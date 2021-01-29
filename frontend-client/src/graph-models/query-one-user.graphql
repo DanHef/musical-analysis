@@ -1,0 +1,15 @@
+query queryOneUser ($userId: ID!) {
+  user (id: $userId){
+    id
+    username
+    firstname
+    lastname
+    email
+    parts {
+      id
+      tag {
+        name
+      }
+    }
+  }
+}

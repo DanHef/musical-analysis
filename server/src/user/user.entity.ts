@@ -1,11 +1,12 @@
 import { FilterableField, Relation, FilterableRelation } from "@nestjs-query/query-graphql";
 import { ID, InputType, ObjectType, Field} from "@nestjs/graphql";
+import { AnalysisSessionEntity } from "src/analysis-session/analysis-session.entity";
 import { PartEntity } from "src/part/part.entity";
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable } from "typeorm";
 
 @ObjectType('User')
-//@Relation('parts', () => [PartEntity], {nullable: true})
-@FilterableRelation('parts', () => PartEntity, {nullable: true, allowFiltering: true})
+@FilterableRelation('parts', () => [PartEntity], {nullable: true})
+//@FilterableRelation('parts', () => PartEntity, {nullable: true, allowFiltering: true})
 @InputType()
 @Entity('user')
 export class UserEntity {
@@ -29,7 +30,10 @@ export class UserEntity {
     @Column({nullable: true})
     email: string;
 
-    @OneToMany(type => PartEntity, part => part.user.username)
+    @OneToMany(type => PartEntity, part => part.user)
     //@Field(type => [PartEntity])
+    @JoinTable()
+    @Field(type => [PartEntity])
     parts?: PartEntity[];
+
 }

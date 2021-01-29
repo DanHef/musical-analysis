@@ -1,0 +1,15 @@
+mutation setTagOnPart ($partId: ID!, $tagId: ID!) {
+  setTagOnPart (input: {
+    id: $partId
+    relationId: $tagId
+  })
+	{
+    id
+    started
+    stopped
+    description
+    tag {
+      name
+    }
+  }
+}

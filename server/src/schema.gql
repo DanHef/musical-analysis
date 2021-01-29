@@ -69,7 +69,9 @@ type AnalysisSessionDeleteResponse {
 
 input AnalysisSessionFilter {
   and: [AnalysisSessionFilter!]
+  assignees: AnalysisSessionFilterUserFilter
   id: IDFilterComparison
+  moderator: AnalysisSessionFilterUserFilter
   name: StringFieldComparison
   or: [AnalysisSessionFilter!]
   parts: AnalysisSessionFilterPartFilter
@@ -86,8 +88,6 @@ input AnalysisSessionFilterPartFilter {
   started: DateFieldComparison
   stopped: DateFieldComparison
   submitted: BooleanFieldComparison
-  tag: TagEntityFilterComparison
-  user: UserEntityFilterComparison
 }
 
 input AnalysisSessionFilterTagFilter {
@@ -96,6 +96,16 @@ input AnalysisSessionFilterTagFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [AnalysisSessionFilterTagFilter!]
+}
+
+input AnalysisSessionFilterUserFilter {
+  and: [AnalysisSessionFilterUserFilter!]
+  email: StringFieldComparison
+  firstname: StringFieldComparison
+  id: IDFilterComparison
+  lastname: StringFieldComparison
+  or: [AnalysisSessionFilterUserFilter!]
+  username: StringFieldComparison
 }
 
 type AnalysisSessionMaxAggregate {
@@ -197,7 +207,6 @@ input CreatePart {
   stopped: DateTime
   submitted: Boolean
   tag: TagEntity
-  user: UserEntity
 }
 
 input CreateTag {
@@ -211,6 +220,7 @@ input CreateUser {
   firstname: String
   id: ID
   lastname: String
+  parts: [PartEntity!]
   username: String
 }
 
@@ -290,6 +300,7 @@ type Mutation {
   addAssigneesToAnalysisSession(input: RelationsInput!): AnalysisSession!
   addPartsToAnalysisSession(input: RelationsInput!): AnalysisSession!
   addPartsToTag(input: RelationsInput!): Tag!
+  addPartsToUser(input: RelationsInput!): User!
   addTagsToAnalysisSession(input: RelationsInput!): AnalysisSession!
   createManyAnalysisSessions(input: CreateManyAnalysisSessionsInput!): [AnalysisSession!]!
   createManyParts(input: CreateManyPartsInput!): [Part!]!
@@ -312,13 +323,12 @@ type Mutation {
   removeModeratorFromAnalysisSession(input: RelationInput!): AnalysisSession!
   removePartsFromAnalysisSession(input: RelationsInput!): AnalysisSession!
   removePartsFromTag(input: RelationsInput!): Tag!
-  removePartsFromUser(input: RelationInput!): User!
+  removePartsFromUser(input: RelationsInput!): User!
   removeTagFromPart(input: RelationInput!): Part!
   removeTagsFromAnalysisSession(input: RelationsInput!): AnalysisSession!
   removeUserFromPart(input: RelationInput!): Part!
   setAnalysisSessionOnPart(input: RelationInput!): Part!
   setModeratorOnAnalysisSession(input: RelationInput!): AnalysisSession!
-  setPartsOnUser(input: RelationInput!): User!
   setTagOnPart(input: RelationInput!): Part!
   setUserOnPart(input: RelationInput!): Part!
   syncUsers(id: ID!): [User!]!
@@ -361,8 +371,6 @@ type PartCountAggregate {
   started: Int
   stopped: Int
   submitted: Int
-  tag: Int
-  user: Int
 }
 
 input PartDeleteFilter {
@@ -373,8 +381,6 @@ input PartDeleteFilter {
   started: DateFieldComparison
   stopped: DateFieldComparison
   submitted: BooleanFieldComparison
-  tag: TagEntityFilterComparison
-  user: UserEntityFilterComparison
 }
 
 type PartDeleteResponse {
@@ -384,7 +390,6 @@ type PartDeleteResponse {
   stopped: DateTime
   submitted: Boolean
   tag: Tag
-  user: User
 }
 
 input PartEntity {
@@ -394,10 +399,10 @@ input PartEntity {
   stopped: DateTime
   submitted: Boolean!
   tag: TagEntity!
-  user: UserEntity!
 }
 
 input PartFilter {
+  analysisSession: PartFilterAnalysisSessionFilter
   and: [PartFilter!]
   description: StringFieldComparison
   id: IDFilterComparison
@@ -405,8 +410,35 @@ input PartFilter {
   started: DateFieldComparison
   stopped: DateFieldComparison
   submitted: BooleanFieldComparison
-  tag: TagEntityFilterComparison
-  user: UserEntityFilterComparison
+  tag: PartFilterTagFilter
+  user: PartFilterUserFilter
+}
+
+input PartFilterAnalysisSessionFilter {
+  and: [PartFilterAnalysisSessionFilter!]
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [PartFilterAnalysisSessionFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
+}
+
+input PartFilterTagFilter {
+  and: [PartFilterTagFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [PartFilterTagFilter!]
+}
+
+input PartFilterUserFilter {
+  and: [PartFilterUserFilter!]
+  email: StringFieldComparison
+  firstname: StringFieldComparison
+  id: IDFilterComparison
+  lastname: StringFieldComparison
+  or: [PartFilterUserFilter!]
+  username: StringFieldComparison
 }
 
 type PartMaxAggregate {
@@ -414,8 +446,6 @@ type PartMaxAggregate {
   id: ID
   started: DateTime
   stopped: DateTime
-  tag: Tag
-  user: User
 }
 
 type PartMinAggregate {
@@ -423,8 +453,6 @@ type PartMinAggregate {
   id: ID
   started: DateTime
   stopped: DateTime
-  tag: Tag
-  user: User
 }
 
 input PartSort {
@@ -439,8 +467,6 @@ enum PartSortFields {
   started
   stopped
   submitted
-  tag
-  user
 }
 
 type PartSumAggregate {
@@ -455,8 +481,6 @@ input PartUpdateFilter {
   started: DateFieldComparison
   stopped: DateFieldComparison
   submitted: BooleanFieldComparison
-  tag: TagEntityFilterComparison
-  user: UserEntityFilterComparison
 }
 
 type Query {
@@ -609,29 +633,23 @@ input TagEntity {
   name: String
 }
 
-input TagEntityFilterComparison {
-  eq: TagEntity
-  gt: TagEntity
-  gte: TagEntity
-  iLike: TagEntity
-  in: [TagEntity!]
-  is: Boolean
-  isNot: Boolean
-  like: TagEntity
-  lt: TagEntity
-  lte: TagEntity
-  neq: TagEntity
-  notILike: TagEntity
-  notIn: [TagEntity!]
-  notLike: TagEntity
-}
-
 input TagFilter {
   and: [TagFilter!]
   description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [TagFilter!]
+  parts: TagFilterPartFilter
+}
+
+input TagFilterPartFilter {
+  and: [TagFilterPartFilter!]
+  description: StringFieldComparison
+  id: IDFilterComparison
+  or: [TagFilterPartFilter!]
+  started: DateFieldComparison
+  stopped: DateFieldComparison
+  submitted: BooleanFieldComparison
 }
 
 type TagMaxAggregate {
@@ -753,7 +771,6 @@ input UpdatePart {
   stopped: DateTime
   submitted: Boolean
   tag: TagEntity
-  user: UserEntity
 }
 
 input UpdateTag {
@@ -767,6 +784,7 @@ input UpdateUser {
   firstname: String
   id: ID
   lastname: String
+  parts: [PartEntity!]
   username: String
 }
 
@@ -775,7 +793,16 @@ type User {
   firstname: String
   id: ID!
   lastname: String
-  parts: Part
+  parts(
+    """Specify to filter the records returned."""
+    filter: PartFilter = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [PartSort!] = []
+  ): [Part!]
   username: String
 }
 
@@ -806,6 +833,7 @@ type UserDeleteResponse {
   firstname: String
   id: ID
   lastname: String
+  parts: [Part!]
   username: String
 }
 
@@ -814,24 +842,8 @@ input UserEntity {
   firstname: String
   id: ID!
   lastname: String
+  parts: [PartEntity!]!
   username: String
-}
-
-input UserEntityFilterComparison {
-  eq: UserEntity
-  gt: UserEntity
-  gte: UserEntity
-  iLike: UserEntity
-  in: [UserEntity!]
-  is: Boolean
-  isNot: Boolean
-  like: UserEntity
-  lt: UserEntity
-  lte: UserEntity
-  neq: UserEntity
-  notILike: UserEntity
-  notIn: [UserEntity!]
-  notLike: UserEntity
 }
 
 input UserFilter {
@@ -853,8 +865,6 @@ input UserFilterPartFilter {
   started: DateFieldComparison
   stopped: DateFieldComparison
   submitted: BooleanFieldComparison
-  tag: TagEntityFilterComparison
-  user: UserEntityFilterComparison
 }
 
 type UserMaxAggregate {
