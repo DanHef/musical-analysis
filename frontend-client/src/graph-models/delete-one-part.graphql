@@ -1,0 +1,5 @@
+mutation deletePart ($partId: ID!){
+  deleteOnePart (input: { id: $partId }){
+      id
+  }
+}

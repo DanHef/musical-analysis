@@ -1,11 +1,12 @@
 query queryAllParts ($sessionId: ID!){
     analysisSession (id: $sessionId) {
-        parts {
+        parts (paging: {offset: 0 limit: 50}){
             id
             started
             stopped
             description
-            user {username}
+            user {id username}
+            tag {id name}
         }
     }
 }

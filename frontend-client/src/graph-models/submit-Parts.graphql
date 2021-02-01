@@ -1,0 +1,8 @@
+mutation submitParts ($partIds: [ID!]!) {
+  updateManyParts (input: {
+    filter: {id: {in: $partIds}}
+    update: {submitted: true}
+  }){
+    updatedCount
+  }
+}

@@ -13,7 +13,9 @@ type AnalysisSession {
     """Specify to sort results."""
     sorting: [UserSort!] = []
   ): [User!]
+  audioFile: String
   id: ID!
+  mimeType: String
   moderator: User
   name: String!
   parts(
@@ -61,7 +63,9 @@ input AnalysisSessionDeleteFilter {
 }
 
 type AnalysisSessionDeleteResponse {
+  audioFile: String
   id: ID
+  mimeType: String
   name: String
   started: DateTime
   stopped: DateTime
@@ -154,7 +158,9 @@ input BooleanFieldComparison {
 }
 
 input CreateAnalysisSession {
+  audioFile: String
   id: ID
+  mimeType: String
   name: String
   started: DateTime
   stopped: DateTime
@@ -689,7 +695,9 @@ input TagUpdateFilter {
 }
 
 input UpdateAnalysisSession {
+  audioFile: String
   id: ID
+  mimeType: String
   name: String
   started: DateTime
   stopped: DateTime

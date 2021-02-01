@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, Inject } from '@angular/core';
+import { Component, NgZone, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.min.js';
@@ -87,6 +87,9 @@ export class AnalysisMasterComponent implements OnInit {
     selectedTag;
     sessionTags;
     tagDescription
+
+    @ViewChild('fileInput') fileInput: ElementRef;
+      fileAttr = 'Choose File';
 
     constructor(private readonly httpClient: HttpClient,
                 private readonly apollo: Apollo,
@@ -457,4 +460,29 @@ export class AnalysisMasterComponent implements OnInit {
             this.createTag();
         });
     }
+
+    public uploadFileEvt(imgFile: any) {
+        if (imgFile.target.files && imgFile.target.files[0]) {
+          this.fileAttr = '';
+          Array.from(imgFile.target.files).forEach((file: File) => {
+            this.fileAttr += file.name + ' - ';
+          });
+    
+          // HTML5 FileReader API
+          let reader = new FileReader();
+          reader.onload = (e: any) => {
+            let image = new Image();
+            image.src = e.target.result;
+            image.onload = rs => {
+              let imgBase64Path = e.target.result;
+            };
+          };
+          reader.readAsDataURL(imgFile.target.files[0]);
+          
+          // Reset if duplicate image uploaded again
+          this.fileInput.nativeElement.value = "";
+        } else {
+          this.fileAttr = 'Choose File';
+        }
+      }
 }

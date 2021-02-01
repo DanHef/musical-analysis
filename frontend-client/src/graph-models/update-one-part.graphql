@@ -1,0 +1,16 @@
+mutation updateEditedPart ($partId: ID!, $newdescription: String!, $tagId: ID!) {
+    updateOnePart (input: {
+        id: $partId
+        update: {
+            description: $newdescription
+            tag: {id: $tagId}
+            }
+        }
+    ){
+        id
+        started
+        stopped
+        description
+        tag {id name}
+    }
+}

@@ -1,86 +1,105 @@
-<mat-card style="margin: 20px;">
-  <mat-card-title>
-    User und Session Anmeldung
-  </mat-card-title>
-  <mat-card-content>
-    <mat-form-field style="margin: 20px 0 0 20px;">
-      <mat-label>Benutzername</mat-label>
-      <input matInput placeholder="Username" (change)="onUsernameChanged()" [value]="username" (input)="username = $event.target.value">
-    </mat-form-field>
+<div>
+  <mat-card style="margin: 20px;">
+    <mat-card-title>
+      User und Session Anmeldung
+    </mat-card-title>
+    <mat-card-content>
+      <mat-form-field style="margin: 20px 0 0 20px;">
+        <mat-label>Benutzername</mat-label>
+        <input matInput placeholder="Username" (change)="onUsernameChanged()" [value]="username" (input)="username = $event.target.value">
+      </mat-form-field>
 
-    <br>
-    <mat-form-field style="margin: 20px 0 0 20px;">
-      <mat-label>Benutzername</mat-label>
-      <mat-select [(value)]="userID" (selectionChange)="onUsernameSelected()">
-        <mat-option *ngFor="let user of allUsers" [value]="user.id">
-          {{user.username}}
-        </mat-option>
+      <br>
+      <mat-form-field style="margin: 20px 0 0 20px;">
+        <mat-label>Benutzername</mat-label>
+        <mat-select [(value)]="userID" (selectionChange)="onUsernameSelected()">
+          <mat-option *ngFor="let user of allUsers" [value]="user.id">
+            {{user.username}}
+          </mat-option>
+          </mat-select>
+      </mat-form-field>
+
+      <mat-form-field style="margin: 0px 0 0 20px;">
+        <mat-label>Analysis Session ID</mat-label>
+        <mat-select [(value)]="selectedAnalysisSessionID" (selectionChange)="onSessionSelected()">
+          <mat-option *ngFor="let analysisItem of allSessions" [value]="analysisItem.id">
+            {{analysisItem.name}}
+          </mat-option>
         </mat-select>
-    </mat-form-field>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div>
+  <mat-card style="margin: 20px;">
+    <mat-card-title>
+      Session Markierungen
+    </mat-card-title>
+    <mat-card-content>
 
-    <mat-form-field style="margin: 0px 0 0 20px;">
-      <mat-label>Analysis Session ID</mat-label>
-      <mat-select [(value)]="selectedAnalysisSessionID" (selectionChange)="onSessionSelected()">
-        <mat-option *ngFor="let analysisItem of allSessions" [value]="analysisItem.id">
-          {{analysisItem.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-card-content>
-</mat-card>
+      <button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)" [disabled]="!selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1"
+        style="margin: 20px 20px 20px 0px;" class="mat-raised-button">{{tag.name}}</button>
+    </mat-card-content>
+  </mat-card>
+</div>
 
-<mat-card style="margin: 20px;">
-  <mat-card-title>
-    Session Markierungen
-  </mat-card-title>
-  <mat-card-content>
+<div>
+  <mat-card style="margin: 20px;">
+    <mat-card-title>Marker</mat-card-title>
+    <mat-card-content>
+        <div style="width: 100%; float: left;">
+            <mat-table [dataSource]="userParts" class="mat-elevation-z8">
+                <!-- ID Column -->
+                <ng-container matColumnDef="started">
+                    <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
+                    <mat-cell *matCellDef="let part"> {{ part.started | date:'mm:ss'}} </mat-cell>
+                </ng-container>
 
-    <button mat-button *ngFor="let tag of tags" (click)="markNewPart(tag.id)" [disabled]="!selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1"
-      style="margin: 20px 20px 20px 0px;" class="mat-raised-button">{{tag.name}}</button>
+                <!-- Name Column -->
+                <ng-container matColumnDef="stopped">
+                    <mat-header-cell *matHeaderCellDef>Ende</mat-header-cell>
+                    <mat-cell *matCellDef="let part"> {{ part.stopped | date:'mm:ss' }} </mat-cell>
+                </ng-container>
 
-    <h2>Markierungen</h2>
+                <!-- Description tag -->
+                <ng-container matColumnDef="tag">
+                  <mat-header-cell *matHeaderCellDef>Tag</mat-header-cell>
+                  <mat-cell *matCellDef="let part"> {{ part.tag.name }} </mat-cell>
+                </ng-container>
 
-    <mat-table [dataSource]="userParts" class="mat-elevation-z8">
-      <!-- Started Column -->
-      <ng-container matColumnDef="started">
-        <mat-header-cell *matHeaderCellDef>Beginn</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.relStarted | date:'mm:ss'}} </mat-cell>
-      </ng-container>
+                <!-- Description Column -->
+                <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
+                    <mat-cell *matCellDef="let part"> {{ part.description }} </mat-cell>
+                </ng-container>
 
-      <!-- Stopped Column -->
-      <ng-container matColumnDef="stopped">
-        <mat-header-cell *matHeaderCellDef>Zeit</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.relStopped | date:'mm:ss'}} </mat-cell>
-      </ng-container>
+                <!-- Edit Column -->
+                <ng-container matColumnDef="edit">
+                    <mat-header-cell *matHeaderCellDef>Bearbeiten</mat-header-cell>
+                    <mat-cell *matCellDef="let part">
+                        <button mat-button class="mat-flat-button" (click)="onEdit(part)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
 
-      <!-- Tag Column -->
-      <ng-container matColumnDef="tag">
-        <mat-header-cell *matHeaderCellDef>Kategorie</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.tag.name}} </mat-cell>
-      </ng-container>
+                <!-- Delete Column -->
+                <ng-container matColumnDef="delete">
+                  <mat-header-cell *matHeaderCellDef>Löschen</mat-header-cell>
+                  <mat-cell *matCellDef="let part">
+                      <button mat-button class="mat-flat-button" (click)="onDeletePart(part)">
+                          <mat-icon>delete</mat-icon>
+                      </button>
+                  </mat-cell>
+              </ng-container>
 
-      <!-- Description Column -->
-      <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef>Beschreibung</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
-      </ng-container>
-
-      <!-- Edit Column -->
-      <ng-container matColumnDef="edit">
-        <mat-header-cell *matHeaderCellDef>Edit</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <button [disabled]="element.submitted === true" mat-button class="mat-flat-button" (click)="onEdit(element)">
-                <mat-icon>edit</mat-icon>
-            </button>
-        </mat-cell>
-    </ng-container>
-
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button class="mat-primary" [disabled]="!userParts || userParts?.length === 0 || !selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1" (click)="onSubmitParts()">Ergebnis Abschicken</button>
-  </mat-card-actions>
-</mat-card>
+                <mat-header-row *matHeaderRowDef="displayedPartColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedPartColumns;"></mat-row>
+            </mat-table>
+        </div>
+      <mat-card-actions>
+        <button mat-raised-button class="mat-primary" [disabled]="!userParts || userParts?.length === 0 || !selectedAnalysis ||selectedAnalysis?.analysisUser?.status === 1" (click)="onSubmitParts()">Ergebnis Abschicken</button>
+      </mat-card-actions>
+    </mat-card-content>
+  </mat-card>
+</div>

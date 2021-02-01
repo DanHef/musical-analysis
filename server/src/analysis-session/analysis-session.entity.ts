@@ -1,5 +1,5 @@
 import { FilterableField, FilterableRelation, Relation } from "@nestjs-query/query-graphql";
-import { ObjectType, ID } from "@nestjs/graphql";
+import { ObjectType, ID, Field } from "@nestjs/graphql";
 import { PartEntity } from "src/part/part.entity";
 import { TagEntity } from "src/tag/tag.entity";
 import { UserEntity } from "src/user/user.entity";
@@ -51,5 +51,13 @@ export class AnalysisSessionEntity {
     @OneToMany(() => PartEntity, part => part.analysisSession)
     @JoinTable()
     parts: PartEntity[];
+
+    @Field({nullable: true})
+    @Column({nullable: true, type: "longblob"})
+    audioFile: String;
+
+    @Field({nullable: true})
+    @Column({nullable: true})
+    mimeType: String;
 
 }

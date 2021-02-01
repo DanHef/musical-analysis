@@ -24,7 +24,6 @@ export class TagEntity {
     () => PartEntity,
     part => part.tag,
     )
-    @JoinTable()
     parts!: PartEntity[];
 
 }

@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 
 import { NavigationComponent } from './navigation/navigation.component';
 import { AnalysisClientComponent } from './analysis-client/analysis-client.component';
-import { EditPartDialogComponent } from './edit-part/edit-part.component';
+import { EditPartDialogComponent } from './analysis-client/edit-part/edit-part.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { GraphQLModule } from './graphql.module';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,9 @@ import { GraphQLModule } from './graphql.module';
     MatCardModule,
     MatDialogModule,
     GraphQLModule
+  ],
+  exports: [
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
