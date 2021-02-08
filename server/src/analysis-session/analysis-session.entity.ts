@@ -1,5 +1,5 @@
 import { FilterableField, FilterableRelation, Relation } from "@nestjs-query/query-graphql";
-import { ObjectType, ID, Field } from "@nestjs/graphql";
+import { ObjectType, ID, Field, InputType } from "@nestjs/graphql";
 import { PartEntity } from "src/part/part.entity";
 import { TagEntity } from "src/tag/tag.entity";
 import { UserEntity } from "src/user/user.entity";
@@ -13,6 +13,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMa
 @FilterableRelation('parts', () => [PartEntity], {nullable: true, allowFiltering: true})
 
 @Entity('analysis_session')
+@InputType()
 export class AnalysisSessionEntity {
     @FilterableField(type => ID)
     @PrimaryGeneratedColumn()
@@ -51,13 +52,5 @@ export class AnalysisSessionEntity {
     @OneToMany(() => PartEntity, part => part.analysisSession)
     @JoinTable()
     parts: PartEntity[];
-
-    @Field({nullable: true})
-    @Column({nullable: true, type: "longblob"})
-    audioFile: String;
-
-    @Field({nullable: true})
-    @Column({nullable: true})
-    mimeType: String;
 
 }

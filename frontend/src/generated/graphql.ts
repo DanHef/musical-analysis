@@ -14,6 +14,8 @@ export type Scalars = {
   Float: number;
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 
@@ -81,13 +83,52 @@ export type AnalysisSessionDeleteResponse = {
   stopped?: Maybe<Scalars['DateTime']>;
 };
 
+export type AnalysisSessionEntity = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  started?: Maybe<Scalars['DateTime']>;
+  stopped?: Maybe<Scalars['DateTime']>;
+};
+
 export type AnalysisSessionFilter = {
   and?: Maybe<Array<AnalysisSessionFilter>>;
+  assignees?: Maybe<AnalysisSessionFilterUserFilter>;
   id?: Maybe<IdFilterComparison>;
+  moderator?: Maybe<AnalysisSessionFilterUserFilter>;
   name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<AnalysisSessionFilter>>;
+  parts?: Maybe<AnalysisSessionFilterPartFilter>;
   started?: Maybe<DateFieldComparison>;
   stopped?: Maybe<DateFieldComparison>;
+  tags?: Maybe<AnalysisSessionFilterTagFilter>;
+};
+
+export type AnalysisSessionFilterPartFilter = {
+  and?: Maybe<Array<AnalysisSessionFilterPartFilter>>;
+  description?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  or?: Maybe<Array<AnalysisSessionFilterPartFilter>>;
+  started?: Maybe<DateFieldComparison>;
+  stopped?: Maybe<DateFieldComparison>;
+  submitted?: Maybe<BooleanFieldComparison>;
+};
+
+export type AnalysisSessionFilterTagFilter = {
+  and?: Maybe<Array<AnalysisSessionFilterTagFilter>>;
+  description?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  name?: Maybe<StringFieldComparison>;
+  or?: Maybe<Array<AnalysisSessionFilterTagFilter>>;
+};
+
+export type AnalysisSessionFilterUserFilter = {
+  and?: Maybe<Array<AnalysisSessionFilterUserFilter>>;
+  email?: Maybe<StringFieldComparison>;
+  firstname?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  lastname?: Maybe<StringFieldComparison>;
+  or?: Maybe<Array<AnalysisSessionFilterUserFilter>>;
+  username?: Maybe<StringFieldComparison>;
 };
 
 export type AnalysisSessionMaxAggregate = {
@@ -191,6 +232,7 @@ export type CreatePart = {
   started?: Maybe<Scalars['DateTime']>;
   stopped?: Maybe<Scalars['DateTime']>;
   submitted?: Maybe<Scalars['Boolean']>;
+  tag?: Maybe<TagEntity>;
 };
 
 export type CreateTag = {
@@ -204,6 +246,7 @@ export type CreateUser = {
   firstname?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   lastname?: Maybe<Scalars['String']>;
+  parts?: Maybe<Array<PartEntity>>;
   username?: Maybe<Scalars['String']>;
 };
 
@@ -280,6 +323,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addAssigneesToAnalysisSession: AnalysisSession;
   addPartsToAnalysisSession: AnalysisSession;
+  addPartsToTag: Tag;
   addPartsToUser: User;
   addTagsToAnalysisSession: AnalysisSession;
   createManyAnalysisSessions: Array<AnalysisSession>;
@@ -302,11 +346,14 @@ export type Mutation = {
   removeAssigneesFromAnalysisSession: AnalysisSession;
   removeModeratorFromAnalysisSession: AnalysisSession;
   removePartsFromAnalysisSession: AnalysisSession;
+  removePartsFromTag: Tag;
   removePartsFromUser: User;
+  removeTagFromPart: Part;
   removeTagsFromAnalysisSession: AnalysisSession;
   removeUserFromPart: Part;
   setAnalysisSessionOnPart: Part;
   setModeratorOnAnalysisSession: AnalysisSession;
+  setTagOnPart: Part;
   setUserOnPart: Part;
   syncUsers: Array<User>;
   updateManyAnalysisSessions: UpdateManyResponse;
@@ -317,6 +364,7 @@ export type Mutation = {
   updateOnePart: Part;
   updateOneTag: Tag;
   updateOneUser: User;
+  uploadFile?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -326,6 +374,11 @@ export type MutationAddAssigneesToAnalysisSessionArgs = {
 
 
 export type MutationAddPartsToAnalysisSessionArgs = {
+  input: RelationsInput;
+};
+
+
+export type MutationAddPartsToTagArgs = {
   input: RelationsInput;
 };
 
@@ -440,8 +493,18 @@ export type MutationRemovePartsFromAnalysisSessionArgs = {
 };
 
 
+export type MutationRemovePartsFromTagArgs = {
+  input: RelationsInput;
+};
+
+
 export type MutationRemovePartsFromUserArgs = {
   input: RelationsInput;
+};
+
+
+export type MutationRemoveTagFromPartArgs = {
+  input: RelationInput;
 };
 
 
@@ -461,6 +524,11 @@ export type MutationSetAnalysisSessionOnPartArgs = {
 
 
 export type MutationSetModeratorOnAnalysisSessionArgs = {
+  input: RelationInput;
+};
+
+
+export type MutationSetTagOnPartArgs = {
   input: RelationInput;
 };
 
@@ -514,6 +582,11 @@ export type MutationUpdateOneUserArgs = {
   input: UpdateOneUserInput;
 };
 
+
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload'];
+};
+
 export type OffsetPaging = {
   /** Limit the number of records returned */
   limit?: Maybe<Scalars['Int']>;
@@ -529,6 +602,7 @@ export type Part = {
   started?: Maybe<Scalars['DateTime']>;
   stopped?: Maybe<Scalars['DateTime']>;
   submitted: Scalars['Boolean'];
+  tag?: Maybe<Tag>;
   user?: Maybe<User>;
 };
 
@@ -563,9 +637,20 @@ export type PartDeleteResponse = {
   started?: Maybe<Scalars['DateTime']>;
   stopped?: Maybe<Scalars['DateTime']>;
   submitted?: Maybe<Scalars['Boolean']>;
+  tag?: Maybe<Tag>;
+};
+
+export type PartEntity = {
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  started?: Maybe<Scalars['DateTime']>;
+  stopped?: Maybe<Scalars['DateTime']>;
+  submitted: Scalars['Boolean'];
+  tag: TagEntity;
 };
 
 export type PartFilter = {
+  analysisSession?: Maybe<PartFilterAnalysisSessionFilter>;
   and?: Maybe<Array<PartFilter>>;
   description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
@@ -573,6 +658,35 @@ export type PartFilter = {
   started?: Maybe<DateFieldComparison>;
   stopped?: Maybe<DateFieldComparison>;
   submitted?: Maybe<BooleanFieldComparison>;
+  tag?: Maybe<PartFilterTagFilter>;
+  user?: Maybe<PartFilterUserFilter>;
+};
+
+export type PartFilterAnalysisSessionFilter = {
+  and?: Maybe<Array<PartFilterAnalysisSessionFilter>>;
+  id?: Maybe<IdFilterComparison>;
+  name?: Maybe<StringFieldComparison>;
+  or?: Maybe<Array<PartFilterAnalysisSessionFilter>>;
+  started?: Maybe<DateFieldComparison>;
+  stopped?: Maybe<DateFieldComparison>;
+};
+
+export type PartFilterTagFilter = {
+  and?: Maybe<Array<PartFilterTagFilter>>;
+  description?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  name?: Maybe<StringFieldComparison>;
+  or?: Maybe<Array<PartFilterTagFilter>>;
+};
+
+export type PartFilterUserFilter = {
+  and?: Maybe<Array<PartFilterUserFilter>>;
+  email?: Maybe<StringFieldComparison>;
+  firstname?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  lastname?: Maybe<StringFieldComparison>;
+  or?: Maybe<Array<PartFilterUserFilter>>;
+  username?: Maybe<StringFieldComparison>;
 };
 
 export type PartMaxAggregate = {
@@ -728,6 +842,14 @@ export type Tag = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
+  parts?: Maybe<Array<Part>>;
+};
+
+
+export type TagPartsArgs = {
+  filter?: Maybe<PartFilter>;
+  paging?: Maybe<OffsetPaging>;
+  sorting?: Maybe<Array<PartSort>>;
 };
 
 export type TagAvgAggregate = {
@@ -757,12 +879,29 @@ export type TagDeleteResponse = {
   name?: Maybe<Scalars['String']>;
 };
 
+export type TagEntity = {
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+};
+
 export type TagFilter = {
   and?: Maybe<Array<TagFilter>>;
   description?: Maybe<StringFieldComparison>;
   id?: Maybe<IdFilterComparison>;
   name?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<TagFilter>>;
+  parts?: Maybe<TagFilterPartFilter>;
+};
+
+export type TagFilterPartFilter = {
+  and?: Maybe<Array<TagFilterPartFilter>>;
+  description?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  or?: Maybe<Array<TagFilterPartFilter>>;
+  started?: Maybe<DateFieldComparison>;
+  stopped?: Maybe<DateFieldComparison>;
+  submitted?: Maybe<BooleanFieldComparison>;
 };
 
 export type TagMaxAggregate = {
@@ -879,6 +1018,7 @@ export type UpdatePart = {
   started?: Maybe<Scalars['DateTime']>;
   stopped?: Maybe<Scalars['DateTime']>;
   submitted?: Maybe<Scalars['Boolean']>;
+  tag?: Maybe<TagEntity>;
 };
 
 export type UpdateTag = {
@@ -892,8 +1032,10 @@ export type UpdateUser = {
   firstname?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   lastname?: Maybe<Scalars['String']>;
+  parts?: Maybe<Array<PartEntity>>;
   username?: Maybe<Scalars['String']>;
 };
+
 
 export type User = {
   __typename?: 'User';
@@ -942,6 +1084,16 @@ export type UserDeleteResponse = {
   firstname?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   lastname?: Maybe<Scalars['String']>;
+  parts?: Maybe<Array<Part>>;
+  username?: Maybe<Scalars['String']>;
+};
+
+export type UserEntity = {
+  email?: Maybe<Scalars['String']>;
+  firstname?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  lastname?: Maybe<Scalars['String']>;
+  parts: Array<PartEntity>;
   username?: Maybe<Scalars['String']>;
 };
 
@@ -952,7 +1104,18 @@ export type UserFilter = {
   id?: Maybe<IdFilterComparison>;
   lastname?: Maybe<StringFieldComparison>;
   or?: Maybe<Array<UserFilter>>;
+  parts?: Maybe<UserFilterPartFilter>;
   username?: Maybe<StringFieldComparison>;
+};
+
+export type UserFilterPartFilter = {
+  and?: Maybe<Array<UserFilterPartFilter>>;
+  description?: Maybe<StringFieldComparison>;
+  id?: Maybe<IdFilterComparison>;
+  or?: Maybe<Array<UserFilterPartFilter>>;
+  started?: Maybe<DateFieldComparison>;
+  stopped?: Maybe<DateFieldComparison>;
+  submitted?: Maybe<BooleanFieldComparison>;
 };
 
 export type UserMaxAggregate = {
@@ -1016,6 +1179,16 @@ export type AddTagMutation = (
   ) }
 );
 
+export type UploadAudioMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type UploadAudioMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'uploadFile'>
+);
+
 export type AnalysisSessionTagsQueryVariables = Exact<{
   analysisSessionId: Scalars['ID'];
 }>;
@@ -1048,6 +1221,29 @@ export type AllAnalysisSessionsQuery = (
   )> }
 );
 
+export type QueryAllPartsQueryVariables = Exact<{
+  sessionId: Scalars['ID'];
+}>;
+
+
+export type QueryAllPartsQuery = (
+  { __typename?: 'Query' }
+  & { analysisSession?: Maybe<(
+    { __typename?: 'AnalysisSession' }
+    & { parts?: Maybe<Array<(
+      { __typename?: 'Part' }
+      & Pick<Part, 'id' | 'started' | 'stopped' | 'description'>
+      & { user?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      )>, tag?: Maybe<(
+        { __typename?: 'Tag' }
+        & Pick<Tag, 'id' | 'name'>
+      )> }
+    )>> }
+  )> }
+);
+
 export type AllTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1072,6 +1268,16 @@ export type OneAnalysisSessionQuery = (
     & { tags?: Maybe<Array<(
       { __typename?: 'Tag' }
       & Pick<Tag, 'id' | 'name' | 'description'>
+    )>>, parts?: Maybe<Array<(
+      { __typename?: 'Part' }
+      & Pick<Part, 'id' | 'started' | 'stopped'>
+      & { tag?: Maybe<(
+        { __typename?: 'Tag' }
+        & Pick<Tag, 'name'>
+      )>, user?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      )> }
     )>> }
   )> }
 );
@@ -1122,6 +1328,22 @@ export const AddTagDocument = gql`
   })
   export class AddTagGQL extends Apollo.Mutation<AddTagMutation, AddTagMutationVariables> {
     document = AddTagDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UploadAudioDocument = gql`
+    mutation uploadAudio($file: Upload!) {
+  uploadFile(file: $file)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UploadAudioGQL extends Apollo.Mutation<UploadAudioMutation, UploadAudioMutationVariables> {
+    document = UploadAudioDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -1179,6 +1401,37 @@ export const AllAnalysisSessionsDocument = gql`
       super(apollo);
     }
   }
+export const QueryAllPartsDocument = gql`
+    query queryAllParts($sessionId: ID!) {
+  analysisSession(id: $sessionId) {
+    parts(paging: {offset: 0, limit: 50}) {
+      id
+      started
+      stopped
+      description
+      user {
+        id
+        username
+      }
+      tag {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class QueryAllPartsGQL extends Apollo.Query<QueryAllPartsQuery, QueryAllPartsQueryVariables> {
+    document = QueryAllPartsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const AllTagsDocument = gql`
     query AllTags {
   tags {
@@ -1204,13 +1457,25 @@ export const OneAnalysisSessionDocument = gql`
   analysisSession(id: $analysisSessionId) {
     id
     name
+    started
+    stopped
     tags {
       id
       name
       description
     }
-    started
-    stopped
+    parts {
+      id
+      started
+      stopped
+      tag {
+        name
+      }
+      user {
+        id
+        username
+      }
+    }
   }
 }
     `;

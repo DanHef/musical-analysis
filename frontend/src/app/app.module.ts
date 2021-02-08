@@ -7,6 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,6 +26,11 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { GraphQLModule } from './graphql.module';
 
 import { TagDialog } from './analysis-master/tag-dialog.component'
+
+import * as PlotlyJS from 'plotly.js/dist/plotly.js';
+import { PlotlyModule } from "angular-plotly.js";
+
+PlotlyModule.plotlyjs = PlotlyJS;
 
 @NgModule({
   declarations: [
@@ -49,7 +56,8 @@ import { TagDialog } from './analysis-master/tag-dialog.component'
     MatDialogModule,
     MatGridListModule,
     MdePopoverModule,
-    GraphQLModule
+    GraphQLModule,
+    PlotlyModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

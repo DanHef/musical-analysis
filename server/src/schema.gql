@@ -13,9 +13,7 @@ type AnalysisSession {
     """Specify to sort results."""
     sorting: [UserSort!] = []
   ): [User!]
-  audioFile: String
   id: ID!
-  mimeType: String
   moderator: User
   name: String!
   parts(
@@ -63,10 +61,15 @@ input AnalysisSessionDeleteFilter {
 }
 
 type AnalysisSessionDeleteResponse {
-  audioFile: String
   id: ID
-  mimeType: String
   name: String
+  started: DateTime
+  stopped: DateTime
+}
+
+input AnalysisSessionEntity {
+  id: ID!
+  name: String!
   started: DateTime
   stopped: DateTime
 }
@@ -158,9 +161,7 @@ input BooleanFieldComparison {
 }
 
 input CreateAnalysisSession {
-  audioFile: String
   id: ID
-  mimeType: String
   name: String
   started: DateTime
   stopped: DateTime
@@ -346,6 +347,7 @@ type Mutation {
   updateOnePart(input: UpdateOnePartInput!): Part!
   updateOneTag(input: UpdateOneTagInput!): Tag!
   updateOneUser(input: UpdateOneUserInput!): User!
+  uploadFile(file: Upload!): Boolean
 }
 
 input OffsetPaging {
@@ -497,9 +499,6 @@ type Query {
   analysisSessions(
     """Specify to filter the records returned."""
     filter: AnalysisSessionFilter = {}
-
-    """Limit or page results."""
-    paging: OffsetPaging = {limit: 10}
 
     """Specify to sort results."""
     sorting: [AnalysisSessionSort!] = []
@@ -695,9 +694,7 @@ input TagUpdateFilter {
 }
 
 input UpdateAnalysisSession {
-  audioFile: String
   id: ID
-  mimeType: String
   name: String
   started: DateTime
   stopped: DateTime
@@ -795,6 +792,9 @@ input UpdateUser {
   parts: [PartEntity!]
   username: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   email: String

@@ -3,12 +3,19 @@ query OneAnalysisSession ($analysisSessionId: ID!){
     {
         id
         name
+        started
+        stopped
         tags {
             id
             name
             description
         }
-        started
-        stopped
+        parts {
+            id
+            started
+            stopped
+            tag {name}
+            user {id username}
+        }
     }
 }

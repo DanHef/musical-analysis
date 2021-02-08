@@ -8,10 +8,12 @@ import { environment } from '../../environments/environment';
 import TimelinesChart, { Group } from 'timelines-chart';
 import { Apollo, gql, Mutation } from 'apollo-angular';
 import { map } from "rxjs/operators";
-import { AllAnalysisSessionsGQL, AllTagsGQL, AnalysisSessionTagsGQL, OneAnalysisSessionGQL, RemoveTagFromSessionGQL, QueryOneTagGQL } from 'src/generated/graphql';
+import { AllAnalysisSessionsGQL, AllTagsGQL, AnalysisSessionTagsGQL, OneAnalysisSessionGQL, RemoveTagFromSessionGQL, QueryOneTagGQL, UploadAudioGQL, QueryAllPartsGQL } from 'src/generated/graphql';
 import { privateEncrypt } from 'crypto';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { TagDialog } from "./tag-dialog.component";
+import { throwServerError } from '@apollo/client/core';
+import { Rearranger } from './rearranger';
 
 interface AnalysisSessionsResponse {
     analysisSessions: Array<any>
@@ -71,10 +73,10 @@ const MUTATION_UPLOAD = gql(`mutation ($analysisSessionId: ID!, $file: Upload!) 
     styleUrls: ['./analysis-master.component.css']
 })
 export class AnalysisMasterComponent implements OnInit {
-    analysisSessionID = '';
+    analysisSessionName = '';
     currentAnalysisSession;
     wavesurfer;
-    analysis;
+    allAnalyses;
     statistics;
     displayedColumns: string[] = ['id', 'started', 'stopped', 'delete'];
     displayedTagsColumns: string[] = ['id', 'name', 'description', 'delete']
@@ -86,10 +88,26 @@ export class AnalysisMasterComponent implements OnInit {
     newTagDescription = '';
     selectedTag;
     sessionTags;
-    tagDescription
+    tagDescription;
+    statsData = [];
+
+    graph = {
+        data: [],
+        //[
+
+//            { x: [1, 2, 3], y: [2, 6, 3], type: 'scatter', mode: 'lines+points', marker: {color: 'red'} },
+//            { x: [1, 2, 3], y: [2, 5, 3], type: 'bar' },
+          //  {'x': [51.4253934075608, 66.12518513671863], 'y': ['marker', 'ME'], 'orientation': 'h', 'type': 'bar'},
+            //{'x': [14.683646702633254, 26.517696223678296], 'y': ['marker', 'ME'], 'orientation': 'h', 'type': 'bar'},
+        //    {'x': [33.86104910382357, 7.352020210174256], 'y': ['marker', 'ME'], 'orientation': 'h', 'type': 'bar'},
+        //    {'x': [0.024812356553563675, 'null'], 'y': ['marker', 'ME'], 'orientation': 'h', 'type': 'bar'}
+        //],
+        layout: {barmode: 'stack', title: 'Session Überblick'}
+    };
 
     @ViewChild('fileInput') fileInput: ElementRef;
       fileAttr = 'Choose File';
+    sessionAudioFile: string;
 
     constructor(private readonly httpClient: HttpClient,
                 private readonly apollo: Apollo,
@@ -99,7 +117,8 @@ export class AnalysisMasterComponent implements OnInit {
                 private readonly queryOneAnalysisSessionService: OneAnalysisSessionGQL,
                 private readonly removeOneTagFromSessionService: RemoveTagFromSessionGQL,
                 private readonly queryOneTagService: QueryOneTagGQL,
-                private readonly zone: NgZone,
+                private readonly querySessionPartsService: QueryAllPartsGQL,
+                private readonly uploadAudioService: UploadAudioGQL,
                 private tagDialog: MatDialog) { }
 
     public ngOnInit() {
@@ -117,7 +136,7 @@ export class AnalysisMasterComponent implements OnInit {
             ]
         });
 
-        this.wavesurfer.load(environment.audioEndpoint + '/Trauer-Anfang.mp3');
+        this.wavesurfer.load('http://localhost:3000/' + 'audio/10-Schroeder-Zum-ersten-Advent.mp3');
 
         this.loadAnalysis();
         this.loadTags();
@@ -128,7 +147,7 @@ export class AnalysisMasterComponent implements OnInit {
             mutation: gql(`mutation{
                 createOneAnalysisSession(input:{
                     analysisSession:{
-                        name:"${this.analysisSessionID}"
+                        name:"${this.analysisSessionName}"
                     }
                 })
                 {id name started stopped}
@@ -328,6 +347,7 @@ export class AnalysisMasterComponent implements OnInit {
         if(event.isUserInput) {
             this.loadAnalysisById(event.source.value);
         }
+        this.analysisSessionName = event.source.value;
     }
 
     public async onTagSelected(event) {
@@ -355,18 +375,12 @@ export class AnalysisMasterComponent implements OnInit {
     }
     
     public async onStatisticsRefresh() {
-        this.statisticsData = await this.loadAnalysisStatistics();
         this.loadAnalysisById(this.currentAnalysisSession.id);
-
+        await this.loadAnalysisStatistics(this.currentAnalysisSession.id);
         // tslint:disable-next-line:forin
-        for (const user in this.statisticsData) {
-            const userParts = this.statisticsData[user].partData;
-
-            for (const part of userParts) {
-                part.startDate = new Date(part.started);
-                part.stopDate = new Date(part.stopped);
-            }
-        }
+        const re = new Rearranger();
+        this.graph.data = re.rearrangeStats(this.statistics);
+        //this.graph.data = [];
     }
 
     getMarginForUserStatistic(username) {
@@ -411,8 +425,8 @@ export class AnalysisMasterComponent implements OnInit {
     }
 
     private async loadAnalysis() {
-        this.analysis = await (await this.queryAllAnalysisSessionsService.fetch().toPromise()).data.analysisSessions;
-        return this.analysis;
+        this.allAnalyses = await (await this.queryAllAnalysisSessionsService.fetch().toPromise()).data.analysisSessions;
+        return this.allAnalyses;
     }
     
     private async loadTags() {
@@ -437,10 +451,14 @@ export class AnalysisMasterComponent implements OnInit {
         this.sessionTags = analysisSession.tags
     }
 
-    private async loadAnalysisStatistics() {
+    private async loadAnalysisStatistics(sessionId) {
         // tslint:disable-next-line:max-line-length
-        this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.currentAnalysisSession.id + '/statistics').toPromise();
-
+        //this.statistics = await this.httpClient.get(environment.apiEndpoint + '/analysis/' + this.currentAnalysisSession.id + '/statistics').toPromise();
+        const completeAnalysisSession = await this.queryOneAnalysisSessionService.fetch({
+            analysisSessionId: sessionId,
+        }).toPromise();
+        this.statistics = completeAnalysisSession.data.analysisSession;
+        console.log(this.statistics);
         return this.statistics;
     }
     
@@ -461,28 +479,10 @@ export class AnalysisMasterComponent implements OnInit {
         });
     }
 
-    public uploadFileEvt(imgFile: any) {
-        if (imgFile.target.files && imgFile.target.files[0]) {
-          this.fileAttr = '';
-          Array.from(imgFile.target.files).forEach((file: File) => {
-            this.fileAttr += file.name + ' - ';
-          });
-    
-          // HTML5 FileReader API
-          let reader = new FileReader();
-          reader.onload = (e: any) => {
-            let image = new Image();
-            image.src = e.target.result;
-            image.onload = rs => {
-              let imgBase64Path = e.target.result;
-            };
-          };
-          reader.readAsDataURL(imgFile.target.files[0]);
-          
-          // Reset if duplicate image uploaded again
-          this.fileInput.nativeElement.value = "";
-        } else {
-          this.fileAttr = 'Choose File';
-        }
-      }
+    public async uploadFileEvt(audioFile: any) {
+        const result = await this.uploadAudioService.mutate({
+            file: audioFile.target.files[0]
+        }).toPromise();
+    };
+
 }

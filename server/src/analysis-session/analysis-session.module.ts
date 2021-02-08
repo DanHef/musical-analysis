@@ -13,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             resolvers: [{
                 DTOClass: AnalysisSessionEntity,
                 EntityClass: AnalysisSessionEntity,
-                pagingStrategy: PagingStrategies.OFFSET,
+                pagingStrategy: PagingStrategies.NONE,
             }],
         }),
     ],
